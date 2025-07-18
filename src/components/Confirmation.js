@@ -772,7 +772,7 @@ return (
 );
 })()}
                   
-                  <p className="small text-muted text-center mb-0">Please keep this reference number for your records</p>
+                  <p className="small text-muted text-center mb-0">Please keep this reference number for your records and if you booked for multiple check on your email the rest of your reference number </p>
                 </div>
 
                 <Row className="mb-3">
