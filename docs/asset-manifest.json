@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.15c3c534.css",
+    "main.css": "/static/css/main.1a5f7d6b.css",
     "main.js": "/static/js/main.7272e64f.js",
     "static/js/453.3ca45714.chunk.js": "/static/js/453.3ca45714.chunk.js",
     "static/media/4.4.png": "/static/media/4.4.39f8f93de9b8582cd6d0.png",
@@ -35,12 +35,12 @@
     "static/media/pet-daycare.svg": "/static/media/pet-daycare.039a8dfacf15899b351ccfe0760f2def.svg",
     "static/media/pet-background.svg": "/static/media/pet-background.b9927c2a6366c0fce380.svg",
     "index.html": "/index.html",
-    "main.15c3c534.css.map": "/static/css/main.15c3c534.css.map",
+    "main.1a5f7d6b.css.map": "/static/css/main.1a5f7d6b.css.map",
     "main.7272e64f.js.map": "/static/js/main.7272e64f.js.map",
     "453.3ca45714.chunk.js.map": "/static/js/453.3ca45714.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.15c3c534.css",
+    "static/css/main.1a5f7d6b.css",
     "static/js/main.7272e64f.js"
   ]
 }
