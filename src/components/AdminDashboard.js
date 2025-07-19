@@ -924,6 +924,10 @@ const AdminDashboard = () => {
     
     // Show confirmation dialog before changing status
     const promptStatusChange = (bookingId, newStatus) => {
+        if (!isAuthenticated) {
+            alert('Only administrators can modify booking statuses. Please log in as an administrator.');
+            return;
+        }
         setConfirmationAction({ bookingId, newStatus });
         setShowConfirmationDialog(true);
     };
