@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import '../assets/logo192.png';
+
+const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'missing_site_key';
 import './SplashScreen.css';
 
 
 
 const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
-  const [fadeOut, setFadeOut] = useState(false);
+  const isAdminPage = window.location.hash.includes('/admin');
+    const [fadeOut, setFadeOut] = useState(false);
+  const [verified, setVerified] = useState(isAdminPage);
 
   useEffect(() => {
+    // If on admin page, skip captcha automatically
+    if (isAdminPage) {
+      setVerified(true);
+    }
+
     // Start fade out after a brief delay
     const timer = setTimeout(() => {
       setFadeOut(true);
@@ -39,6 +49,13 @@ const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
           <h2 className="brand-name">Baguio Pet Boarding</h2>
           <p className="tagline">Your Pet's Extended Home</p>
         </div>
+
+        {/* reCAPTCHA verification (customers only) */}
+        {!isAdminPage && !verified && (
+          <div className="captcha-wrapper">
+            <ReCAPTCHA sitekey={SITE_KEY} onChange={() => setVerified(true)} />
+          </div>
+        )}
 
         <div className="pet-animations">
           <div className="dog-animation"></div>
