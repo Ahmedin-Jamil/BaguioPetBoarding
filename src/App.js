@@ -79,6 +79,8 @@ const AppContent = () => {
 
             </Routes>
             
+            {!isAdminPage && (
+            <>
             {/* Help Button Section - Controls Frame Chat visibility */}
             <div className="help-section">
               {/* Help Button */}
@@ -128,6 +130,7 @@ const AppContent = () => {
                 </div>
               )}
             </div>
+          </>)}
           </ServiceAvailabilityProvider>
         </RoomAvailabilityProvider>
       </BookingProvider>

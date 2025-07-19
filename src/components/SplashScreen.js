@@ -1,31 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
 import '../assets/logo192.png';
 import './SplashScreen.css';
 
-const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'missing_site_key';
+
 
 const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
   const [fadeOut, setFadeOut] = useState(false);
-  const [verified, setVerified] = useState(false);
-
-  const handleCaptchaChange = async (value) => {
-    if (value) {
-      try {
-        // Optional: Add API call to verify captcha on backend
-        setVerified(true);
-      } catch (error) {
-        console.error('Verification error:', error);
-        // Continue anyway since we're not doing backend verification yet
-        setVerified(true);
-      }
-    }
-  };
 
   useEffect(() => {
-    if (!verified) return;
-    
-    // Start fade out immediately after verification
+    // Start fade out after a brief delay
     const timer = setTimeout(() => {
       setFadeOut(true);
     }, 500); // Small delay for smooth transition
@@ -39,7 +22,7 @@ const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
       clearTimeout(timer);
       clearTimeout(completeTimer);
     };
-  }, [onFinished, verified]);
+  }, [onFinished]);
 
   return (
     <div className={`splash-screen ${fadeOut ? 'fade-out' : ''}`}>
@@ -56,12 +39,6 @@ const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
           <h2 className="brand-name">Baguio Pet Boarding</h2>
           <p className="tagline">Your Pet's Extended Home</p>
         </div>
-        {/* reCAPTCHA verification */}
-        {!verified && (
-          <div className="captcha-wrapper">
-            <ReCAPTCHA sitekey={SITE_KEY} onChange={handleCaptchaChange} />
-          </div>
-        )}
 
         <div className="pet-animations">
           <div className="dog-animation"></div>
