@@ -12,27 +12,30 @@ const SplashScreen = ({ onFinished, displayTime = 5000 }) => {
     const [fadeOut, setFadeOut] = useState(false);
   const [verified, setVerified] = useState(isAdminPage);
 
+  // first effect: auto-verify for admin
   useEffect(() => {
-    // If on admin page, skip captcha automatically
     if (isAdminPage) {
       setVerified(true);
     }
+  }, [isAdminPage]);
+
+  // second effect: once verified, start fade-out and call onFinished
+  useEffect(() => {
+    if (!verified) return; // wait until captcha completed (or admin auto-verified)
 
     // Start fade out after a brief delay
-    const timer = setTimeout(() => {
-      setFadeOut(true);
-    }, 500); // Small delay for smooth transition
+    const timer = setTimeout(() => setFadeOut(true), 500);
 
     // Call onFinished callback after fade animation
     const completeTimer = setTimeout(() => {
       if (onFinished) onFinished();
-    }, 1500); // 1.5s total transition time
+    }, 1500);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(completeTimer);
     };
-  }, [onFinished]);
+  }, [verified, onFinished]);
 
   return (
     <div className={`splash-screen ${fadeOut ? 'fade-out' : ''}`}>
