@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import '../assets/logo192.png';
+import './SplashScreen.css';
 
 const SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || 'missing_site_key';
-import './SplashScreen.css';
 
 
 
