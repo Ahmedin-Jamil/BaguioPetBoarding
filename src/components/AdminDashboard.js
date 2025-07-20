@@ -932,6 +932,9 @@ const AdminDashboard = () => {
         });
         
         return `${formattedStart} - ${formattedEnd}`;
+    // Determine if current user is admin
+    const { currentAdmin } = useAuth();
+    const isAdmin = Boolean(currentAdmin);
     };
     
     // Show confirmation dialog before changing status
