@@ -402,6 +402,12 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
     
     // Handle saving the booking extension
     const handleExtensionSave = async () => {
+        // Double-check admin authentication in case modal was opened bypassing initial guard
+        const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
+        if (!currentAdmin) {
+            alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
+            return;
+        }
         if (!extensionDate) {
             setExtensionError('Please select a new end date');
             return;

@@ -816,6 +816,13 @@ function toCamelCase(obj) {
 
   // Update booking status with role-based permissions
   const updateBookingStatus = async (bookingId, newStatus) => {
+    // Check for admin authentication
+    const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
+    if (!currentAdmin) {
+      console.error('BookingContext: Unauthorized attempt to update booking status');
+      setError('Only administrators can manage booking status');
+      return { success: false, message: 'Only administrators can manage booking status. Please log in as an administrator.' };
+    }
     console.log(`BookingContext: Updating booking ${bookingId} to ${newStatus}`);
 
     try {
