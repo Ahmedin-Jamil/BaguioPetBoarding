@@ -337,7 +337,8 @@ function BookingsList({ bookings, formatDateRange, selectedDate, onStatusChange,
 // BookingItem Component for displaying booking information in the list
 const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onViewDetails, fetchBookings }) => {
     const { updateRoomAvailability } = useRoomAvailability();
-    const { isAuthenticated } = useAuth();
+    const { currentAdmin } = useAuth();
+    const isAdmin = Boolean(currentAdmin);
     const [showExtensionModal, setShowExtensionModal] = useState(false);
     const [extensionDate, setExtensionDate] = useState(null);
     const [extensionError, setExtensionError] = useState('');
@@ -392,7 +393,7 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
     // Handle opening the extension modal with auth guard
     const handleOpenExtension = (e) => {
         e.stopPropagation();
-        if (!isAuthenticated) {
+        if (!isAdmin) {
             alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
             return;
         }
@@ -935,7 +936,7 @@ const AdminDashboard = () => {
     
     // Show confirmation dialog before changing status
     const promptStatusChange = (bookingId, newStatus) => {
-        if (!isAuthenticated) {
+        if (!isAdmin) {
             alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
             return;
         }
@@ -981,7 +982,7 @@ const AdminDashboard = () => {
             day: date?.getDate()
         });
         
-        if (!isAuthenticated) {
+        if (!isAdmin) {
             alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
             return;
         }

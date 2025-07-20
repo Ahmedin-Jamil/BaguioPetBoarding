@@ -8,10 +8,10 @@ import { useAuth } from '../context/AuthContext';
  * login page can navigate back after successful authentication.
  */
 const RequireAdminAuth = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { currentAdmin } = useAuth();
   const location = useLocation();
 
-  if (!isAuthenticated) {
+  if (!currentAdmin) {
     // send user to login, remember where they were trying to go
     return <Navigate to="/admin/login" replace state={{ from: location }} />;
   }
