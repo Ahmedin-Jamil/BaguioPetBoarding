@@ -25,6 +25,7 @@ import DaycareReservation from './components/DaycareReservation';
 import Confirmation from './components/Confirmation';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
+import RequireAdminAuth from './components/RequireAdminAuth';
 
 import BookingSearch from './components/BookingSearch';
 import ChatFrame from './components/ChatFrame';
@@ -75,7 +76,11 @@ const AppContent = () => {
               <Route path="/confirmation" element={<Confirmation />} />
               <Route path="/search-booking" element={<BookingSearch />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={
+  <RequireAdminAuth>
+    <AdminDashboard />
+  </RequireAdminAuth>
+} />
               
 
             </Routes>
