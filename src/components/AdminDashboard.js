@@ -337,6 +337,7 @@ function BookingsList({ bookings, formatDateRange, selectedDate, onStatusChange,
 // BookingItem Component for displaying booking information in the list
 const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onViewDetails, fetchBookings }) => {
     const { updateRoomAvailability } = useRoomAvailability();
+    const { isAuthenticated } = useAuth();
     const [showExtensionModal, setShowExtensionModal] = useState(false);
     const [extensionDate, setExtensionDate] = useState(null);
     const [extensionError, setExtensionError] = useState('');
@@ -386,6 +387,16 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
     const handleViewDetails = (e) => {
         e.stopPropagation();
         onViewDetails(booking);
+    };
+
+    // Handle opening the extension modal with auth guard
+    const handleOpenExtension = (e) => {
+        e.stopPropagation();
+        if (!isAuthenticated) {
+            alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
+            return;
+        }
+        setShowExtensionModal(true);
     };
     
     // Handle saving the booking extension
@@ -500,7 +511,7 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
                             variant="outline-warning"
                             size="sm"
                             className="action-btn ms-1"
-                            onClick={() => setShowExtensionModal(true)}
+                            onClick={handleOpenExtension}
                         >
                             <FontAwesomeIcon icon={faCalendarAlt} className="me-1" /> Extension
                         </Button>
@@ -925,7 +936,7 @@ const AdminDashboard = () => {
     // Show confirmation dialog before changing status
     const promptStatusChange = (bookingId, newStatus) => {
         if (!isAuthenticated) {
-            alert('Only administrators can modify booking statuses. Please log in as an administrator.');
+            alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
             return;
         }
         setConfirmationAction({ bookingId, newStatus });
