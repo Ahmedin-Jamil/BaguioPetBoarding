@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, createContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
 import { useRoomAvailability } from '../context/RoomAvailabilityContext';
@@ -641,7 +641,7 @@ const AdminDashboard = () => {
         setSelectedBooking
     };
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, logout, currentAdmin } = useAuth();
     const { 
         bookings, 
         fetchBookings, 
@@ -652,6 +652,8 @@ const AdminDashboard = () => {
         countBookingsForDate,
         isLoading
     } = useBookings();
+
+
 
     // Fetch bookings when component mounts
     useEffect(() => {
@@ -941,8 +943,11 @@ const AdminDashboard = () => {
         };
     
     // ─── ADMIN AUTH ───────────────────────────────
-    const { currentAdmin } = useAuth();
     const isAdmin = Boolean(currentAdmin);
+    if (!isAdmin) {
+        // Fallback: show nothing if somehow rendered without admin (route guard should prevent this)
+        return <div />;
+    }
     // ─────────────────────────────────────────────
 
     // Show confirmation dialog before changing status
