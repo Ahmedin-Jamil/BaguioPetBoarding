@@ -374,6 +374,11 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
         // Prevent the click from toggling the expanded state
         event.stopPropagation();
         
+        // Prevent non-admins
+        if (!isAdmin) {
+            alert('Only administrators can change booking status. Please log in as an administrator.');
+            return;
+        }
         // Update room availability based on status change
         if (booking.serviceType === 'overnight' && booking.selectedRoom) {
             if (newStatus === 'cancelled' || newStatus === 'completed') {
