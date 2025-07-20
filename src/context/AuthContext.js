@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { API_URL } from '../config';
 
 // Create the authentication context
 const AuthContext = createContext();
@@ -16,17 +17,8 @@ export const AuthProvider = ({ children }) => {
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
 
-  // Initialize admin user with secure credentials
-  const [adminUsers] = useState([
-    {
-      id: 1,
-      username: 'baguiopethotel_admin',
-      password: 'BPH@dm1n2025!',
-      name: 'Admin User',
-      email: 'admin@baguiopethotel.com',
-      role: 'administrator'
-    }
-  ]);
+  // Remove hard-coded admin list; authentication will be handled by backend JWT
+  const [adminUsers] = useState([]);
 
 
 
@@ -47,24 +39,35 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Find user with matching credentials
-      const admin = adminUsers.find(
-        user => user.username === username && user.password === password
-      );
-      
-      if (admin) {
-        // Remove password from user object before storing
-        const { password, ...adminWithoutPassword } = admin;
-        setCurrentAdmin(adminWithoutPassword);
-        setIsAuthenticated(true);
-        return { success: true, admin: adminWithoutPassword };
-      } else {
-        setAuthError('Invalid username or password');
-        return { success: false, error: 'Invalid username or password' };
+            // Call backend for admin login
+      const response = await fetch(`${API_URL}/api/auth/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const message = data?.message || 'Invalid username or password';
+        setAuthError(message);
+        return { success: false, error: message };
       }
+
+      const { token, admin } = data;
+      if (!token || !admin) {
+        setAuthError('Malformed authentication response');
+        return { success: false, error: 'Malformed authentication response' };
+      }
+
+      // Store to localStorage for later API calls
+      localStorage.setItem('adminToken', token);
+      localStorage.setItem('currentAdmin', JSON.stringify(admin));
+      localStorage.setItem('isAuthenticated', 'true');
+
+      setCurrentAdmin(admin);
+      setIsAuthenticated(true);
+      return { success: true, admin };
     } catch (error) {
       setAuthError('An error occurred during login');
       return { success: false, error: 'An error occurred during login' };
@@ -80,6 +83,7 @@ export const AuthProvider = ({ children }) => {
     setCurrentAdmin(null);
     setIsAuthenticated(false);
     localStorage.removeItem('currentAdmin');
+    localStorage.removeItem('adminToken');
     localStorage.setItem('isAuthenticated', 'false');
   };
 

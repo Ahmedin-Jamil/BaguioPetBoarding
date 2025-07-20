@@ -866,7 +866,8 @@ function toCamelCase(obj) {
       const response = await fetch(`${API_URL}/api/bookings/${bookingId}/status`, {
         method: 'PATCH',  // Backend expects PATCH method
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
         },
         body: JSON.stringify(requestBody),
       });

@@ -429,12 +429,14 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
         const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
         try {
-            const response = await fetch(`${API_URL}/api/bookings/${booking.id || booking.booking_id}`, {
+            const token = localStorage.getItem('adminToken');
+                const response = await fetch(`${API_URL}/api/bookings/${booking.id || booking.booking_id}/extend`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ end_date: formattedDate }),
+                body: JSON.stringify({ newEndDate: formattedDate }),
             });
             
             const data = await response.json();
