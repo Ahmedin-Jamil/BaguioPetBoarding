@@ -54,7 +54,8 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: message };
       }
 
-      const { token, admin } = data;
+      const token = data?.data?.token;
+      const admin = token ? { admin_id: data.data.admin_id, username: data.data.username } : null;
       if (!token || !admin) {
         setAuthError('Malformed authentication response');
         return { success: false, error: 'Malformed authentication response' };
