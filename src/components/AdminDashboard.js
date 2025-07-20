@@ -932,11 +932,13 @@ const AdminDashboard = () => {
         });
         
         return `${formattedStart} - ${formattedEnd}`;
-    // Determine if current user is admin
+        };
+    
+    // ─── ADMIN AUTH ───────────────────────────────
     const { currentAdmin } = useAuth();
     const isAdmin = Boolean(currentAdmin);
-    };
-    
+    // ─────────────────────────────────────────────
+
     // Show confirmation dialog before changing status
     const promptStatusChange = (bookingId, newStatus) => {
         if (!isAdmin) {
