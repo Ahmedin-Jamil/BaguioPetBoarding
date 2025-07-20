@@ -47,6 +47,10 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
+      if (process.env.NODE_ENV !== 'production') {
+        // Helpful console output so we can see exactly what the backend sent
+        console.log('Admin login response:', data);
+      }
 
       if (!response.ok) {
         const message = data?.message || 'Invalid username or password';
@@ -57,7 +61,13 @@ export const AuthProvider = ({ children }) => {
       // Accept token in either structure: data.data.token (new) or data.token (old)
       const token = data?.data?.token || data?.token;
       const adminPayload = data?.data || data;
-      const admin = token && adminPayload?.admin_id ? { admin_id: adminPayload.admin_id, username: adminPayload.username } : null;
+      // Accept admin object in several shapes
+      let admin = null;
+      if (adminPayload?.admin_id && adminPayload?.username) {
+        admin = { admin_id: adminPayload.admin_id, username: adminPayload.username };
+      } else if (adminPayload?.user && adminPayload.user.admin_id) {
+        admin = { admin_id: adminPayload.user.admin_id, username: adminPayload.user.username };
+      }
       if (!token) {
         setAuthError('Login response missing token');
         return { success: false, error: 'Login response missing token' };
