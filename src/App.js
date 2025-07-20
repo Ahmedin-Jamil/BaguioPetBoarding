@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import RequireAdminAuth from './components/RequireAdminAuth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BookingProvider } from './context/BookingContext';
@@ -74,7 +75,11 @@ const AppContent = () => {
               <Route path="/confirmation" element={<Confirmation />} />
               <Route path="/search-booking" element={<BookingSearch />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={
+                <RequireAdminAuth>
+                  <AdminDashboard />
+                </RequireAdminAuth>
+              } />
               
 
             </Routes>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail, getPasswordStrength, formatErrorMessage } from '../lib/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,7 @@ import './AdminLogin.css';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isAuthenticated, authLoading, authError } = useAuth();
   
   // Form state
@@ -21,7 +22,7 @@ const AdminLogin = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/admin');
+      navigate(location.state?.from?.pathname || '/admin');
     }
   }, [isAuthenticated, navigate]);
   
@@ -58,7 +59,7 @@ const AdminLogin = () => {
           setUsername('');
           setPassword('');
           setFormErrors({});
-          navigate('/admin');
+          navigate(location.state?.from?.pathname || '/admin');
         } else {
           // Increment login attempts on failure
           setLoginAttempts(prev => prev + 1);
