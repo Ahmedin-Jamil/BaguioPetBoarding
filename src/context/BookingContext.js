@@ -905,11 +905,18 @@ function toCamelCase(obj) {
       return { success: false, message: error.message };
     } finally {
       setIsLoading(false);
-    }  
+    }
   };
 
   // Function to manage unavailable dates
   const addUnavailableDate = async (date) => {
+    // Check for admin authentication
+    const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
+    if (!currentAdmin) {
+      console.error('BookingContext: Unauthorized attempt to add unavailable date');
+      setError('Only administrators can manage unavailable dates');
+      return { success: false, message: 'Only administrators can manage unavailable dates. Please log in as an administrator.' };
+    }
     try {
       // Normalize date using the proper utility to avoid timezone issues
       const normalizedDate = createConsistentDate(date);
@@ -968,6 +975,13 @@ function toCamelCase(obj) {
 
   // Function to remove unavailable dates
   const removeUnavailableDate = async (date) => {
+    // Check for admin authentication
+    const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
+    if (!currentAdmin) {
+      console.error('BookingContext: Unauthorized attempt to remove unavailable date');
+      setError('Only administrators can manage unavailable dates');
+      return { success: false, message: 'Only administrators can manage unavailable dates. Please log in as an administrator.' };
+    }
     try {
       // Normalize date using the proper utility to avoid timezone issues
       const normalizedDate = createConsistentDate(date);
