@@ -67,6 +67,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('isAuthenticated', 'true');
 
       setCurrentAdmin(admin);
+      // persist admin info
+      localStorage.setItem('adminToken', token);
+      localStorage.setItem('currentAdmin', JSON.stringify(admin));
+      localStorage.setItem('isAuthenticated', 'true');
       setIsAuthenticated(true);
       return { success: true, admin };
     } catch (error) {
