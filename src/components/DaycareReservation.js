@@ -629,14 +629,38 @@ const DaycareReservation = () => {
               <Col md={3}>
                 <Form.Group controlId="numberOfPets">
                   <Form.Label>Number of Pets</Form.Label>
-                  <Form.Control
-                    type="number"
-                    min="1"
-                    max="10"
+                  <Form.Select
                     value={numberOfPets}
-                    onChange={handleNumberOfPetsChange}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      setNumberOfPets(value);
+                      // Update pets array length
+                      if (value > pets.length) {
+                        // Add new pets
+                        const newPets = [...pets];
+                        for (let i = pets.length; i < value; i++) {
+                          newPets.push({
+                            petName: '',
+                            petType: '',
+                            breed: '',
+                            customBreed: '',
+                            sex: '',
+                            dateOfBirth: '',
+                            weightCategory: ''
+                          });
+                        }
+                        setPets(newPets);
+                      } else if (value < pets.length) {
+                        // Remove pets from the end
+                        setPets(pets.slice(0, value));
+                      }
+                    }}
                     required
-                  />
+                  >
+                    {[...Array(10)].map((_, i) => (
+                      <option key={i + 1} value={i + 1}>{i + 1}</option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>
