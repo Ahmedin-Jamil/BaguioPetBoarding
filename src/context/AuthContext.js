@@ -54,9 +54,15 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: message };
       }
 
-      const token = data?.data?.token;
-      const admin = token ? { admin_id: data.data.admin_id, username: data.data.username } : null;
-      if (!token || !admin) {
+      // Accept token in either structure: data.data.token (new) or data.token (old)
+      const token = data?.data?.token || data?.token;
+      const adminPayload = data?.data || data;
+      const admin = token && adminPayload?.admin_id ? { admin_id: adminPayload.admin_id, username: adminPayload.username } : null;
+      if (!token) {
+        setAuthError('Login response missing token');
+        return { success: false, error: 'Login response missing token' };
+      }
+      if (!admin) {
         setAuthError('Malformed authentication response');
         return { success: false, error: 'Malformed authentication response' };
       }
