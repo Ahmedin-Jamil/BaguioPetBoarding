@@ -818,11 +818,7 @@ function toCamelCase(obj) {
   const updateBookingStatus = async (bookingId, newStatus) => {
     // Check for admin authentication
     const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
-    if (!currentAdmin) {
-      console.error('BookingContext: Unauthorized attempt to update booking status');
-      setError('Only administrators can manage booking status');
-      return { success: false, message: 'Only administrators can manage booking status. Please log in as an administrator.' };
-    }
+
     console.log(`BookingContext: Updating booking ${bookingId} to ${newStatus}`);
 
     try {
@@ -867,7 +863,7 @@ function toCamelCase(obj) {
         method: 'PATCH',  // Backend expects PATCH method
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+
         },
         body: JSON.stringify(requestBody),
       });
@@ -918,13 +914,6 @@ function toCamelCase(obj) {
 
   // Function to manage unavailable dates
   const addUnavailableDate = async (date) => {
-    // Check for admin authentication
-    const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
-    if (!currentAdmin) {
-      console.error('BookingContext: Unauthorized attempt to add unavailable date');
-      setError('Only administrators can manage unavailable dates');
-      return { success: false, message: 'Only administrators can manage unavailable dates. Please log in as an administrator.' };
-    }
     try {
       // Normalize date using the proper utility to avoid timezone issues
       const normalizedDate = createConsistentDate(date);
