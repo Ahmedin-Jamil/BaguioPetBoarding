@@ -70,12 +70,20 @@ const BookingWidget = ({ onServiceSelect }) => {
     }
   }, [serviceType, checkInTime]);
   
-  // Check if a date should be disabled
-  const isDateDisabled = (date) => {
+  // Check if a date should be disabled and show message if needed
+  const isDateDisabled = (date, showMessage = false) => {
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
     const targetDate = createConsistentDate(date);
-    return targetDate < currentDate || isDateUnavailable(targetDate);
+    const isDisabled = targetDate < currentDate || isDateUnavailable(targetDate);
+    
+    if (isDisabled && showMessage) {
+      setTimeout(() => {
+        alert('This date is unavailable for booking. Please select another date.');
+      }, 100);
+    }
+    
+    return isDisabled;
   };
   
   // Apply custom styling to the date input to highlight unavailable dates
@@ -162,15 +170,8 @@ const BookingWidget = ({ onServiceSelect }) => {
     const dateObj = new Date(newCheckInDate);
     
     // Check if the date is unavailable
-    if (isDateDisabled(dateObj)) {
-      // Still set the date but mark it as unavailable visually
-      setCheckInDate(newCheckInDate);
-      
-      // Show a warning message or tooltip if needed
-      setTimeout(() => {
-        alert('This date is unavailable for booking. Please select another date.');
-        setCheckInDate(''); // Clear the invalid date
-      }, 100);
+    if (isDateDisabled(dateObj, true)) {
+      setCheckInDate(''); // Clear the invalid date
       return;
     }
     
@@ -339,48 +340,32 @@ const BookingWidget = ({ onServiceSelect }) => {
                 <Form.Label className="d-flex align-items-center">
                   <Calendar size={16} className="me-2" /> Check-out
                 </Form.Label>
-                <div className="date-input-container">
-                  <Form.Control
-                    type="date"
-                    value={checkOutDate}
-                    onChange={(e) => {
-                      const newDate = e.target.value;
-                      const dateObj = new Date(newDate);
-                      
-                      // Check if the date is unavailable
-                      if (isDateDisabled(dateObj)) {
-                        // Still set the date but mark it as unavailable visually
-                        setCheckOutDate(newDate);
-                        
-                        // Show a warning message
-                        setTimeout(() => {
-                          alert('This date is unavailable for booking. Please select another date.');
-                          setCheckOutDate(''); // Clear the invalid date
-                        }, 100);
-                        return;
-                      }
-                      setCheckOutDate(newDate);
-                    }}
-                    className="booking-input"
-                    min={minCheckoutDate || (checkInDate ? (() => {
-                      const nextDay = createConsistentDate(checkInDate);
-                      nextDay.setDate(nextDay.getDate() + 1);
-                      return formatDateForAPI(nextDay);
-                    })() : formatDateForAPI(new Date()))}
-                    disabled={!checkInDate}
-                    required
-                    onKeyDown={(e) => e.preventDefault()}
-                    style={{
-                      backgroundColor: 'white',
-                      cursor: 'pointer'
-                    }}
-                  />
-                  {checkOutDate && isDateUnavailable(new Date(checkOutDate)) && (
-                    <div className="unavailable-date-tooltip">
-                      This date is unavailable for booking
-                    </div>
-                  )}
-                </div>
+                <Form.Control
+                  type="date"
+                  value={checkOutDate}
+                  onChange={(e) => {
+                    const newDate = e.target.value;
+                    const dateObj = new Date(newDate);
+                    if (isDateDisabled(dateObj, true)) {
+                      setCheckOutDate(''); // Clear the invalid date
+                      return;
+                    }
+                    setCheckOutDate(newDate);
+                  }}
+                  className="booking-input"
+                  min={minCheckoutDate || (checkInDate ? (() => {
+                    const nextDay = createConsistentDate(checkInDate);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    return formatDateForAPI(nextDay);
+                  })() : formatDateForAPI(new Date()))}
+                  disabled={!checkInDate}
+                  required
+                  onKeyDown={(e) => e.preventDefault()}
+                  style={{
+                    backgroundColor: 'white',
+                    cursor: 'pointer'
+                  }}
+                />
                 {!checkInDate && serviceType === 'Overnight Stay' && (
                   <div className="text-muted small mt-1">Select check-in date first</div>
                 )}
