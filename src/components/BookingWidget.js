@@ -70,20 +70,12 @@ const BookingWidget = ({ onServiceSelect }) => {
     }
   }, [serviceType, checkInTime]);
   
-  // Check if a date should be disabled and show message if needed
-  const isDateDisabled = (date, showMessage = false) => {
+  // Check if a date should be disabled
+  const isDateDisabled = (date) => {
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
     const targetDate = createConsistentDate(date);
-    const isDisabled = targetDate < currentDate || isDateUnavailable(targetDate);
-    
-    if (isDisabled && showMessage) {
-      setTimeout(() => {
-        alert('This date is unavailable for booking. Please select another date.');
-      }, 100);
-    }
-    
-    return isDisabled;
+    return targetDate < currentDate || isDateUnavailable(targetDate);
   };
   
   // Apply custom styling to the date input to highlight unavailable dates
@@ -170,8 +162,15 @@ const BookingWidget = ({ onServiceSelect }) => {
     const dateObj = new Date(newCheckInDate);
     
     // Check if the date is unavailable
-    if (isDateDisabled(dateObj, true)) {
-      setCheckInDate(''); // Clear the invalid date
+    if (isDateDisabled(dateObj)) {
+      // Still set the date but mark it as unavailable visually
+      setCheckInDate(newCheckInDate);
+      
+      // Show a warning message or tooltip if needed
+      setTimeout(() => {
+        alert('This date is unavailable for booking. Please select another date.');
+        setCheckInDate(''); // Clear the invalid date
+      }, 100);
       return;
     }
     
@@ -345,10 +344,8 @@ const BookingWidget = ({ onServiceSelect }) => {
                   value={checkOutDate}
                   onChange={(e) => {
                     const newDate = e.target.value;
-                    const dateObj = new Date(newDate);
-                    if (isDateDisabled(dateObj, true)) {
-                      setCheckOutDate(''); // Clear the invalid date
-                      return;
+                    if (isDateDisabled(newDate)) {
+                      return; // Don't allow selection of disabled dates
                     }
                     setCheckOutDate(newDate);
                   }}
