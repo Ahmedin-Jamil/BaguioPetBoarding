@@ -502,6 +502,9 @@ const DaycareReservation = () => {
           startTime,
           endTime,
           specialRequests: additionalInfo || '',
+          special_requests: additionalInfo || '',
+          additionalInfo: additionalInfo || '',
+          additional_info: additionalInfo || '',
           // Top-level weightCategory field ensures BookingContext can normalize correctly
           weightCategory: getWeightCategoryValue(pet.weightCategory, pet.petType),
           weight_category: getWeightCategoryValue(pet.weightCategory, pet.petType),
