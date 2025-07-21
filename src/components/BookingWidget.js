@@ -344,8 +344,19 @@ const BookingWidget = ({ onServiceSelect }) => {
                   value={checkOutDate}
                   onChange={(e) => {
                     const newDate = e.target.value;
-                    if (isDateDisabled(newDate)) {
-                      return; // Don't allow selection of disabled dates
+                    const dateObj = new Date(newDate);
+                    
+                    // Check if the date is unavailable
+                    if (isDateDisabled(dateObj)) {
+                      // Still set the date but mark it as unavailable visually
+                      setCheckOutDate(newDate);
+                      
+                      // Show a warning message
+                      setTimeout(() => {
+                        alert('This date is unavailable for booking. Please select another date.');
+                        setCheckOutDate(''); // Clear the invalid date
+                      }, 100);
+                      return;
                     }
                     setCheckOutDate(newDate);
                   }}
