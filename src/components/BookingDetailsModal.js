@@ -301,10 +301,10 @@ function BookingDetailsModal({ booking, onClose, onHide }) {
                             )}
                         </div>
 
-                        {(booking.notes || booking.specialRequests || booking.special_requests || booking.adminNotes || booking.admin_notes) && (
+                        {(booking.notes || booking.specialRequests || booking.special_requests || booking.adminNotes || booking.admin_notes || booking.additionalInfo) && (
                             <div className="detail-group">
                                 <h3><FontAwesomeIcon icon={faInfoCircle} className="section-icon" /> Special Instructions</h3>
-                                {booking.notes && <p className="notes">{booking.notes}</p>}
+                                {(booking.notes || booking.additionalInfo) && <p className="notes">{booking.notes || booking.additionalInfo}</p>}
                                 {(booking.specialRequests || booking.special_requests) && 
                                     <div>
                                         <h5>Special Requests:</h5>
