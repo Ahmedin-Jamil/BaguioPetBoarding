@@ -542,7 +542,9 @@ function toCamelCase(obj) {
       pet_type: petType,
       weight_category: weightCategory,
       weightCategory: weightCategory,
-      special_requests: bookingData.special_requests,
+      special_requests: bookingData.special_requests || bookingData.specialRequests || bookingData.additionalInfo || '',
+      specialRequests: bookingData.specialRequests || bookingData.special_requests || bookingData.additionalInfo || '',
+      additionalInfo: bookingData.additionalInfo || bookingData.special_requests || bookingData.specialRequests || '',
       // For daycare service, use a default room type (database requires non-NULL)
       room_type: (() => {
         // If it's daycare (service_id=4), use default room type
