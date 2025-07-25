@@ -51,7 +51,7 @@ const OvernightReservation = () => {
         // // console.debug('Successfully fetched unavailable dates from API');
       })
       .catch(error => {
-        console.error('Error fetching unavailable dates:', error);
+        // Error logging removed
       });
   }, [fetchUnavailableDates]);
 
@@ -184,7 +184,7 @@ const getAvailableSlotsForRoom = (roomType, date) => {
     const simpleRoomType = roomType && roomType.split(' ')[0].toLowerCase();
     return getAvailableSlots(date || new Date(), 'overnight', simpleRoomType) || 0;
   } catch (error) {
-    console.error('Error getting room availability:', error);
+    // Error logging removed
     return 0;
   }
 };
@@ -246,7 +246,7 @@ const getAvailableSlotsForRoom = (roomType, date) => {
         }
       }
     } catch (error) {
-      console.error('Error checking room availability:', error);
+      // Error logging removed
       return false; // Consider not available on error
     }
   };
@@ -329,7 +329,7 @@ const handleNumberOfPetsChange = (e) => {
   const newValue = parseInt(e.target.value, 10);
   
   if (isNaN(newValue)) {
-    console.error('Invalid number of pets');
+    // Error logging removed
     return;
   }
   
@@ -346,7 +346,7 @@ const handleNumberOfPetsChange = (e) => {
   const boundedValue = Math.min(safeValue, maxPets);
   
   if (boundedValue !== newValue) {
-    console.warn(`Adjusted number of pets from ${newValue} to ${boundedValue} due to availability limits`);
+    // Warning logging removed
   }
   
   setNumberOfPets(boundedValue);
@@ -404,7 +404,7 @@ const handleNumberOfPetsChange = (e) => {
         if (user && (user.id || user.user_id)) return user.id || user.user_id;
       } else if (userRes.status !== 404) {
         const errorData = await userRes.json();
-        console.error('Error finding user:', errorData);
+        // Error logging removed
         throw new Error(`API error finding user: ${errorData.message || userRes.statusText}`);
       }
       
@@ -429,7 +429,7 @@ const handleNumberOfPetsChange = (e) => {
       const newUser = await userRes.json();
       return newUser.id || newUser.user_id;
     } catch (error) {
-      console.error('Error in createOrFetchUser:', error);
+      // Error logging removed
       throw error;
     }
   };
@@ -453,7 +453,7 @@ const handleNumberOfPetsChange = (e) => {
         if (petObj && (petObj.id || petObj.pet_id)) return petObj.id || petObj.pet_id;
       } else if (petRes.status !== 404) {
         const errorData = await petRes.json();
-        console.error('Error finding pet:', errorData);
+        // Error logging removed
         throw new Error(`API error finding pet: ${errorData.message || petRes.statusText}`);
       }
     
@@ -477,13 +477,13 @@ const handleNumberOfPetsChange = (e) => {
 
       if (!petRes.ok) {
         const errorData = await petRes.json();
-        console.error('Error creating pet:', errorData);
+        // Error logging removed
         throw new Error(`API error creating pet: ${errorData.message || petRes.statusText}`);
       }
       const newPet = await petRes.json();
       return newPet.id || newPet.pet_id;
     } catch (err) {
-      console.error('Error creating/fetching pet:', err);
+      // Error logging removed
       throw new Error(`Could not create or find pet: ${err.message}`);
     }
   };
@@ -757,7 +757,7 @@ useEffect(() => {
     });
     setTotalAmount(sum);
   } catch (err) {
-    console.error('Error computing total amount:', err);
+    // Error logging removed
   }
 }, [pets, startDate, endDate]);
 
@@ -774,7 +774,7 @@ const checkDateAvailability = (date, roomType) => {
     // Then check if the specific room type is at capacity
     return !isServiceAtCapacity(date, 'overnight', roomType);
   } catch (error) {
-    console.error('Error checking date availability:', error);
+    // Error logging removed
     return true; // Assume available on error to avoid blocking reservations
   }
 };

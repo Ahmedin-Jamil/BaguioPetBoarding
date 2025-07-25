@@ -239,7 +239,7 @@ export const createConsistentDate = (date) => {
   }
   
   // If we can't parse it, return null
-  console.warn('Could not parse date:', date);
+  // Warning logging removed
   return null;
 };
 

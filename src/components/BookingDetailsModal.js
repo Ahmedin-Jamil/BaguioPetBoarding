@@ -69,7 +69,7 @@ function BookingDetailsModal({ booking, onClose, onHide }) {
     const isDaycare = (booking.is_daycare === 1 || booking.is_daycare === true || booking.is_daycare === '1' || booking.is_daycare === 'true');
     const serviceType = isDaycare ? 'daycare' : (booking.serviceType || 'overnight');
     
-    console.log('Service type detection:', { isDaycare, serviceType, is_daycare: booking.is_daycare });
+    // console.debug('Service type detection:', { isDaycare, serviceType, is_daycare: booking.is_daycare });
    
     return (
         <div className="modal-overlay" onClick={handleClose}>
@@ -273,29 +273,23 @@ function BookingDetailsModal({ booking, onClose, onHide }) {
                                     <span className="label">Room Type:</span>
                                     <span className="value">
                                         {(() => {
-    // Prefer backend value if present (snake_case, camelCase, fallback)
-    const roomTypeRaw = booking.roomType || booking.room_type || booking.selectedRoom || (booking.petDetails && booking.petDetails[0] && (booking.petDetails[0].roomType || booking.petDetails[0].room_type));
-    
-    // Debug logging for room type values
-    console.log('Room type detection:', {
-        roomType: booking.roomType,
-        room_type: booking.room_type,
-        selectedRoom: booking.selectedRoom,
-        petDetailsRoomType: booking.petDetails && booking.petDetails[0] ? booking.petDetails[0].roomType : null,
-        petDetailsRoom_type: booking.petDetails && booking.petDetails[0] ? booking.petDetails[0].room_type : null,
-        finalRoomTypeRaw: roomTypeRaw
-    });
-    
-    if (!roomTypeRaw) return 'Not specified';
-    
-    const normalized = roomTypeRaw.toString().replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
-    console.log('Normalized room type:', normalized);
-    
-    if (/deluxe/i.test(normalized)) return 'Deluxe Room';
-    if (/premium/i.test(normalized)) return 'Premium Room';
-    if (/executive/i.test(normalized)) return 'Executive Room';
-    return normalized;
-})()}
+                                            // Prefer backend value if present (snake_case, camelCase, fallback)
+                                            const roomTypeRaw = booking.roomType || booking.room_type || booking.selectedRoom || 
+                                                (booking.petDetails && booking.petDetails[0] && 
+                                                (booking.petDetails[0].roomType || booking.petDetails[0].room_type));
+                                            
+                                            if (!roomTypeRaw) return 'Not specified';
+                                            
+                                            const normalized = roomTypeRaw.toString()
+                                                .replace(/_/g, ' ')
+                                                .replace(/\b\w/g, l => l.toUpperCase())
+                                                .trim();
+                                            
+                                            if (/deluxe/i.test(normalized)) return 'Deluxe Room';
+                                            if (/premium/i.test(normalized)) return 'Premium Room';
+                                            if (/executive/i.test(normalized)) return 'Executive Room';
+                                            return normalized;
+                                        })()}
                                     </span>
                                 </div>
                             )}

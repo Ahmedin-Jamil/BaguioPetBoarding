@@ -63,7 +63,7 @@ const validateDate = (dateStr, allowFuture = true) => {
     
     return { isValid: true, message: null };
   } catch (e) {
-    console.error('Date validation error:', e);
+    // Error logging removed
     return { isValid: false, message: 'Error validating date: ' + e.message };
   }
 };
@@ -355,7 +355,7 @@ function toCamelCase(obj) {
       setBookings(formattedBookings);
       return formattedBookings;
     } catch (error) {
-      console.error('BookingContext: Error fetching bookings:', error);
+      // Error logging removed
       setError(`Failed to fetch bookings: ${error.message}`);
     } finally {
       setIsLoading(false);
@@ -755,18 +755,12 @@ function toCamelCase(obj) {
         try {
           // Try to get the full response body
           const errorText = await response.text();
-          console.error('BookingContext: API error raw text:', errorText);
-          
-          // Try to parse as JSON if possible
           try {
             errorPayload = JSON.parse(errorText);
-            console.error('BookingContext: API error parsed:', errorPayload);
           } catch (parseError) {
-            console.error('BookingContext: Error parsing response as JSON:', parseError);
             errorPayload = { message: errorText || `API request failed with status ${response.status}` };
           }
         } catch (e) {
-          console.error('BookingContext: Could not read response text:', e);
           errorPayload = { message: `API request failed with status ${response.status}` };
         }
         throw new Error(errorPayload.message || 'Failed to create booking. Please try again.');
@@ -774,7 +768,7 @@ function toCamelCase(obj) {
 
       // Parse the successful response
       const result = await response.json().catch(() => ({}));
-      // console.log('BookingContext: API booking creation successful, response:', result);
+      // Success logging removed
 
       // After a successful booking, refetch all bookings to ensure the UI is up-to-date.
       // This is crucial for updating availability slots correctly for all users.
@@ -782,7 +776,7 @@ function toCamelCase(obj) {
 
       return result;
     } catch (error) {
-      console.error('BookingContext: Error adding booking:', error);
+      // Error logging removed
       setError(`Failed to add booking: ${error.message}`);
       return false;
     } finally {
@@ -849,8 +843,8 @@ function toCamelCase(obj) {
       
       try {
         const responseText = await response.text();
-        // console.log(`BookingContext: API response status: ${response.status}`);
-        // console.log('BookingContext: API response text:', responseText);
+        // Status logging removed
+        // Response logging removed
         
         // Try to parse as JSON if possible
         if (responseText) {
@@ -858,11 +852,11 @@ function toCamelCase(obj) {
             responseData = JSON.parse(responseText);
             // console.log('BookingContext: API response parsed:', responseData);
           } catch (e) {
-            console.error('Error parsing response as JSON:', e);
+            // Error logging removed
           }
         }
       } catch (e) {
-        console.error('Error reading response:', e);
+        // Error logging removed
       }
       
       if (!response.ok) {
@@ -880,7 +874,7 @@ function toCamelCase(obj) {
       
       return { success: true, message: 'Booking status updated successfully' };
     } catch (error) {
-      console.error('BookingContext: Error updating booking status:', error);
+      // Error logging removed
       setError(`Failed to update booking: ${error.message}`);
       return { success: false, message: error.message };
     } finally {
@@ -940,7 +934,7 @@ function toCamelCase(obj) {
       // console.log('Successfully added unavailable date:', dateString);
       return { success: true };
     } catch (error) {
-      console.error('BookingContext: Error adding unavailable date:', error);
+      // Error logging removed
       setError(`Failed to add unavailable date: ${error.message}`);
       return { success: false, message: error.message };
     }
@@ -951,7 +945,7 @@ function toCamelCase(obj) {
     // Check for admin authentication
     const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
     if (!currentAdmin) {
-      console.error('BookingContext: Unauthorized attempt to remove unavailable date');
+      // Error logging removed
       setError('Only administrators can manage unavailable dates');
       return { success: false, message: 'Only administrators can manage unavailable dates. Please log in as an administrator.' };
     }
@@ -1003,7 +997,7 @@ function toCamelCase(obj) {
       // console.log('Successfully removed unavailable date:', dateString);
       return { success: true };
     } catch (error) {
-      console.error('BookingContext: Error removing unavailable date:', error);
+      // Error logging removed
       setError(`Failed to remove unavailable date: ${error.message}`);
       return { success: false, message: error.message };
     }
@@ -1064,7 +1058,7 @@ function toCamelCase(obj) {
       
       return parsedDates;
     } catch (error) {
-      console.error('BookingContext: Error fetching unavailable dates:', error);
+      // Error logging removed
       setError(`Failed to fetch unavailable dates: ${error.message}`);
       return [];
     } finally {
@@ -1336,7 +1330,7 @@ function toCamelCase(obj) {
         // Then fetch bookings if a user is logged in
         await fetchBookings();
       } catch (err) {
-        console.error('BookingContext: Error initializing data:', err);
+        // Error logging removed
         setError('Failed to initialize booking data');
       } finally {
         setIsLoading(false);
@@ -1356,7 +1350,7 @@ function toCamelCase(obj) {
         await fetchUnavailableDates();
         await fetchBookings();
       } catch (err) {
-        console.error('BookingContext: Error initializing data:', err);
+        // Error logging removed
         setError('Failed to initialize booking data');
       } finally {
         setIsLoading(false);

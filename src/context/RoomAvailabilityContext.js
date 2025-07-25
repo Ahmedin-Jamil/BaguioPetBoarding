@@ -51,10 +51,10 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
       }
       
       // Fallback to today at noon if parsing fails
-      console.error('Invalid date input:', dateInput);
+      // Error logging removed
       return formatDateForAPI(parseLocalDate(new Date()));
     } catch (err) {
-      console.error('Error formatting date for API:', err);
+      // Error logging removed
       return formatDateForAPI(parseLocalDate(new Date())); // Fallback to today at noon
     }
   };
@@ -104,14 +104,14 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
           
           // console.log('Room availability fetched from API:', response.data);
         } catch (apiError) {
-          console.warn('API fetch failed, using capacity calculation instead:', apiError);
+          // Warning logging removed
           
           // Get bookings for this date from context
           // We will calculate availability based on total capacity minus booked rooms
           recalculateAvailability();
         }
       } catch (err) {
-        console.error('Error handling room availability:', err);
+        // Error logging removed
         setError('Failed to handle room availability. Please try again later.');
       } finally {
         setLoading(false);
@@ -148,7 +148,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
   // negative value means releasing slots (increasing availability)
   const updateRoomAvailability = async (roomType, change, status = 'pending') => {
     if (!roomType || typeof change !== 'number') {
-      console.warn('Invalid parameters for updateRoomAvailability');
+      // Warning logging removed
       return;
     }
     
@@ -160,7 +160,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
     setRoomAvailability(prev => {
       const currentRoom = prev[roomType];
       if (!currentRoom) {
-        console.warn(`Invalid room type: ${roomType}`);
+        // Warning logging removed
         return prev;
       }
 
@@ -172,7 +172,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
       
       // Prevent overbooking (only when booking rooms)
       if (change > 0 && currentAvailable < change) {
-        console.warn(`Cannot book ${roomType} room - only ${currentAvailable} slots available but trying to book ${change}`);
+        // Warning logging removed
         return prev;
       }
       
@@ -211,12 +211,12 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
         // console.log('Room availability refreshed from API:', response.data);
         return true;
       } catch (apiError) {
-        console.warn('API fetch failed during refresh, using capacity calculation instead:', apiError);
+        // Warning logging removed
         recalculateAvailability();
         return true; // Consider it a success since we fell back to calculations
       }
     } catch (err) {
-      console.error('Error refreshing room availability:', err);
+      // Error logging removed
       setError('Failed to refresh room availability. Please try again later.');
       return false;
     } finally {

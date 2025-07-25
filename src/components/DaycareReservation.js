@@ -78,7 +78,7 @@ const DaycareReservation = () => {
         // console.log('Successfully fetched unavailable dates from API');
       })
       .catch(error => {
-        console.error('Error fetching unavailable dates:', error);
+        // Error logging removed
       });
   }, [fetchUnavailableDates]);
 
@@ -309,7 +309,7 @@ const DaycareReservation = () => {
       setSlotCount(count);
       return count >= MAX_DAYCARE_SLOTS;
     } catch (error) {
-      console.error('Error checking date availability:', error);
+      // Error logging removed
       setAvailabilityError('Unable to check availability. Please try again.');
       return false;
     }
@@ -358,7 +358,7 @@ const DaycareReservation = () => {
       const newUser = await createResponse.json();
       return newUser.id || newUser.user_id;
     } catch (error) {
-      console.error('Error creating/fetching user:', error);
+      // Error logging removed
       throw error;
     }
   };
@@ -385,7 +385,7 @@ const DaycareReservation = () => {
         if (petObj && (petObj.id || petObj.pet_id)) return petObj;
       } else if (petRes.status !== 404) {
         const errorData = await petRes.json();
-        console.error('Error finding pet:', errorData);
+        // Error logging removed
         throw new Error(`API error finding pet: ${errorData.message || petRes.statusText}`);
       }
 
@@ -409,7 +409,7 @@ const DaycareReservation = () => {
 
       if (!petRes.ok) {
         const raw = await petRes.text();
-        console.error('[DEBUG] Pet create response text:', raw);
+        // Debug logging removed
         let errorData;
         try { errorData = JSON.parse(raw); } catch { errorData = { message: raw }; }
         throw new Error(`API error creating pet: ${errorData.message || petRes.statusText}`);
@@ -417,7 +417,7 @@ const DaycareReservation = () => {
       const newPet = await petRes.json();
       return newPet;
     } catch (err) {
-      console.error('Error creating/fetching pet:', err);
+      // Error logging removed
       throw new Error(`Could not create or find pet: ${err.message}`);
     }
   };
@@ -431,7 +431,7 @@ const DaycareReservation = () => {
           setSlotCount(count);
           setAvailabilityError(null);
         } catch (error) {
-          console.error('Error fetching slot count:', error);
+          // Error logging removed
           setAvailabilityError('Unable to check availability. Please try again.');
         }
       }
@@ -589,7 +589,7 @@ const DaycareReservation = () => {
         replace: true
       });
     } catch (error) {
-      console.error('Error submitting booking:', error);
+      // Error logging removed
       alert(`Booking failed: ${error.message || 'Please try again or contact support'}`);
       setIsSubmitting(false);
     }

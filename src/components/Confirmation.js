@@ -169,7 +169,7 @@ const [serviceType, setServiceType] = useState(() => {
         if (inputDate.getMonth() > currentMonth || 
             (inputDate.getMonth() === currentMonth && inputDate.getDate() > currentDay)) {
           const errorMessage = 'Pet birth date error: Birth date cannot be in the future';
-          console.error(errorMessage);
+          // Error logging removed
           setSubmitError(errorMessage);
           return { isValid: false, message: errorMessage };
         }
@@ -177,7 +177,7 @@ const [serviceType, setServiceType] = useState(() => {
       
       return { isValid: true, message: null };
     } catch (e) {
-      console.error('Date validation error:', e);
+      // Error logging removed
       const errorMessage = 'Error validating date: ' + e.message;
       setSubmitError(errorMessage);
       return { isValid: false, message: errorMessage };
@@ -250,23 +250,23 @@ const [serviceType, setServiceType] = useState(() => {
           // Check in nested data object - DO NOT ADD PREFIX
           else if (result && result.data && result.data.bookingId) {
             // We should not create our own reference number format
-            console.warn('Using bookingId without proper reference number format');
+            // Warning logging removed
             referenceNumber = `${result.data.bookingId}`;
             // console.log('Using data.bookingId as reference:', referenceNumber);
           }
           // Use ID directly if available - DO NOT ADD PREFIX
           else if (result && result.id) {
-            console.warn('Using id without proper reference number format');
+            // Warning logging removed
             referenceNumber = `${result.id}`;
             // console.log('Using id as reference:', referenceNumber);
           } 
           else if (result && result.booking && result.booking.id) {
-            console.warn('Using booking.id without proper reference number format');
+            // Warning logging removed
             referenceNumber = `${result.booking.id}`;
             // console.log('Using booking.id as reference:', referenceNumber);
           } 
           else {
-            console.warn('No reference or ID found in booking response:', result);
+            // Warning logging removed
             referenceNumber = '';
           }  
           // Store the reference number in the booking data

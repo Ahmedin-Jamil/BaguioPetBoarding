@@ -94,7 +94,7 @@ export const ServiceAvailabilityProvider = ({ children, selectedDate }) => {
   // Function to update service availability when booking is made or status changes
   const updateServiceAvailability = (serviceType, groomingType = null, change) => {
     if (!serviceType || typeof change !== 'number') {
-      console.warn('Invalid parameters for updateServiceAvailability');
+      // Warning logging removed
       return;
     }
 
@@ -104,7 +104,7 @@ export const ServiceAvailabilityProvider = ({ children, selectedDate }) => {
         const newAvailable = Math.max(0, Math.min(prev.daycare.total, currentAvailable - change));
         
         if (change > 0 && currentAvailable < change) {
-          console.warn('Cannot book daycare - no slots available');
+          // Warning logging removed
           return prev;
         }
         
@@ -118,14 +118,14 @@ export const ServiceAvailabilityProvider = ({ children, selectedDate }) => {
       } else if (serviceType === 'grooming' && groomingType) {
         const currentService = prev.grooming[groomingType];
         if (!currentService) {
-           console.warn(`Invalid grooming type: ${groomingType}`);
+           // Warning logging removed
            return prev;
         }
         const currentAvailable = currentService.available;
         const newAvailable = Math.max(0, Math.min(currentService.total, currentAvailable - change));
         
         if (change > 0 && currentAvailable < change) {
-          console.warn(`Cannot book ${groomingType} - no slots available`);
+          // Warning logging removed
           return prev;
         }
         
