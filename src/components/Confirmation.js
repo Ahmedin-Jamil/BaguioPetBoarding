@@ -67,11 +67,8 @@ const [serviceType, setServiceType] = useState(() => {
     } else {
       setServiceType('overnight');
     }
-    console.log('Setting service type:',
-      location.state?.serviceType ||
-      location.state?.bookingData?.serviceType ||
-      (location.pathname.includes('grooming') ? 'grooming' : location.pathname.includes('daycare') ? 'daycare' : 'overnight')
-    );
+    // console.debug('Service type determined');
+
   }, [location.pathname, location.state]);
   
   // Get booking data from location state or use default mock data if not available
@@ -152,9 +149,9 @@ const [serviceType, setServiceType] = useState(() => {
       const realWorldDate = new Date();
       const realWorldYear = realWorldDate.getFullYear();
       
-      console.log('Validating birth date:', dateStr);
-      console.log('Input date year:', inputDate.getFullYear());
-      console.log('Real world year:', realWorldYear);
+      // console.log('Validating birth date:', dateStr);
+      // console.log('Input date year:', inputDate.getFullYear());
+      // console.log('Real world year:', realWorldYear);
       
       // Check if year is in the future
       if (inputDate.getFullYear() > realWorldYear) {
@@ -195,8 +192,7 @@ const [serviceType, setServiceType] = useState(() => {
       
       // Create bookings for all service types when confirmed
       if (bookingData.pendingBookings && bookingData.pendingBookings.length > 0) {
-        console.log(`Confirmation: Creating ${serviceType} bookings...`);
-
+        // console.log(`Confirmation: Creating ${serviceType} bookings...`);
         
         // Create all pending bookings
         for (const bookingDetails of bookingData.pendingBookings) {
@@ -208,7 +204,7 @@ const [serviceType, setServiceType] = useState(() => {
             bookingDetails.ownerPhone   = bookingData.ownerDetails.phone;
             bookingDetails.ownerAddress = bookingData.ownerDetails.address;
           }
-          console.log('Creating booking with payload:', JSON.stringify(bookingDetails));
+          // console.log('Creating booking with payload:', JSON.stringify(bookingDetails));
           const result = await addBooking(bookingDetails);
           if (!result || result.error) {
             throw new Error(`Failed to create booking: ${result?.error || 'Unknown error'}`);
@@ -219,55 +215,55 @@ const [serviceType, setServiceType] = useState(() => {
           bookingData.rawBookingResponses.push(result);
           
           // Log the entire response for debugging
-          console.log('FULL API RESPONSE:', JSON.stringify(result, null, 2));
+          // console.log('FULL API RESPONSE:', JSON.stringify(result, null, 2));
           
           // Debug ALL possible reference fields in the response
-          console.log('Raw booking response:', JSON.stringify(result));
-          console.log('Raw booking fields:', Object.keys(result));
+          // console.log('Raw booking response:', JSON.stringify(result));
+          // console.log('Raw booking fields:', Object.keys(result));
           let referenceNumber = null;
         
           // Check for reference_number in the data object (new API response format)
           if (result && result.data && result.data.reference_number) {
             referenceNumber = result.data.reference_number;
-            console.log('Using data.reference_number from API:', referenceNumber);
+            // console.log('Using data.reference_number from API:', referenceNumber);
           }
           // Check for reference_number directly in the result (fallback)
           else if (result && result.reference_number) {
             referenceNumber = result.reference_number;
-            console.log('Using reference_number from API:', referenceNumber);
+            // console.log('Using reference_number from API:', referenceNumber);
           } 
           // Check for camelCase version
           else if (result && result.referenceNumber) {
             referenceNumber = result.referenceNumber;
-            console.log('Using referenceNumber from API:', referenceNumber);
+            // console.log('Using referenceNumber from API:', referenceNumber);
           } 
           // Check for reference field (legacy)
           else if (result && result.reference) {
             referenceNumber = result.reference;
-            console.log('Using reference from API:', referenceNumber);
+            // console.log('Using reference from API:', referenceNumber);
           } 
           // Check in nested booking object
           else if (result && result.booking && result.booking.reference_number) {
             referenceNumber = result.booking.reference_number;
-            console.log('Using booking.reference_number from API:', referenceNumber);
+            // console.log('Using booking.reference_number from API:', referenceNumber);
           } 
           // Check in nested data object - DO NOT ADD PREFIX
           else if (result && result.data && result.data.bookingId) {
             // We should not create our own reference number format
             console.warn('Using bookingId without proper reference number format');
             referenceNumber = `${result.data.bookingId}`;
-            console.log('Using data.bookingId as reference:', referenceNumber);
+            // console.log('Using data.bookingId as reference:', referenceNumber);
           }
           // Use ID directly if available - DO NOT ADD PREFIX
           else if (result && result.id) {
             console.warn('Using id without proper reference number format');
             referenceNumber = `${result.id}`;
-            console.log('Using id as reference:', referenceNumber);
+            // console.log('Using id as reference:', referenceNumber);
           } 
           else if (result && result.booking && result.booking.id) {
             console.warn('Using booking.id without proper reference number format');
             referenceNumber = `${result.booking.id}`;
-            console.log('Using booking.id as reference:', referenceNumber);
+            // console.log('Using booking.id as reference:', referenceNumber);
           } 
           else {
             console.warn('No reference or ID found in booking response:', result);
@@ -280,17 +276,17 @@ const [serviceType, setServiceType] = useState(() => {
           // Set the first reference as the main booking reference
           if (!bookingData.bookingReference && referenceNumber) {
             bookingData.bookingReference = referenceNumber;
-            console.log('Setting main booking reference to:', referenceNumber);
+            // console.log('Setting main booking reference to:', referenceNumber);
           }
           
           // If we have a reference number from data.reference_number, make sure it's used as the main reference
           if (result && result.data && result.data.reference_number) {
             bookingData.bookingReference = result.data.reference_number;
-            console.log('Overriding with data.reference_number as main booking reference:', result.data.reference_number);
+            // console.log('Overriding with data.reference_number as main booking reference:', result.data.reference_number);
           }
         }
         
-        console.log(`Confirmation: Successfully created ${bookingData.pendingBookings.length} bookings`);
+        // console.log(`Confirmation: Successfully created ${bookingData.pendingBookings.length} bookings`);
         
         // Send email notification if we have an email
         if (bookingData.ownerDetails.email) {
@@ -308,7 +304,7 @@ const [serviceType, setServiceType] = useState(() => {
             });
             
             if (emailResponse.ok) {
-              console.log('Grooming email notification sent successfully');
+              // console.log('Grooming email notification sent successfully');
             }
           } catch (emailError) {
             console.warn('Grooming email notification error:', emailError);
@@ -322,11 +318,11 @@ const [serviceType, setServiceType] = useState(() => {
       }
       
       // For overnight/daycare services, proceed with booking creation
-      console.log('Checking for pending bookings for', serviceType, bookingData.pendingBookings ? `(found ${bookingData.pendingBookings.length})` : '(none found)');
+      // console.log('Checking for pending bookings for', serviceType, bookingData.pendingBookings ? `(found ${bookingData.pendingBookings.length})` : '(none found)');
       
       // If pendingBookings exists, use that array (this will be the case for multiple pets in overnight)
       if (bookingData.pendingBookings && bookingData.pendingBookings.length > 0) {
-        console.log(`Confirmation: Creating ${serviceType} bookings for ${bookingData.pendingBookings.length} pets...`);
+        // console.log(`Confirmation: Creating ${serviceType} bookings for ${bookingData.pendingBookings.length} pets...`);
         
         // Create all pending bookings
         for (const bookingDetails of bookingData.pendingBookings) {
@@ -338,7 +334,7 @@ const [serviceType, setServiceType] = useState(() => {
             bookingDetails.ownerPhone   = bookingData.ownerDetails.phone;
             bookingDetails.ownerAddress = bookingData.ownerDetails.address;
           }
-          console.log('Creating booking with payload:', JSON.stringify(bookingDetails));
+          // console.log('Creating booking with payload:', JSON.stringify(bookingDetails));
           const result = await addBooking(bookingDetails);
           if (!result || result.error) {
             throw new Error(`Failed to create booking: ${result?.error || 'Unknown error'}`);
@@ -349,7 +345,7 @@ const [serviceType, setServiceType] = useState(() => {
           bookingData.rawBookingResponses.push(result.booking || result);
         }
         
-        console.log(`Confirmation: Successfully created ${bookingData.pendingBookings.length} bookings`);
+        // console.log(`Confirmation: Successfully created ${bookingData.pendingBookings.length} bookings`);
         
         // Email notification handled below
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -377,14 +373,14 @@ const [serviceType, setServiceType] = useState(() => {
       
       // First check if we have pre-formatted dates from the booking form
       if (bookingData.bookingDate || bookingData.startDate) {
-        console.log('Using pre-formatted dates from booking form');
+        // console.log('Using pre-formatted dates from booking form');
         startDate = bookingData.bookingDate || bookingData.startDate;
         endDate = bookingData.endDate || startDate;
-        console.log('Pre-formatted dates:', { startDate, endDate });
+        // console.log('Pre-formatted dates:', { startDate, endDate });
       }
       // If not, extract from scheduledDateTime
       else if (bookingData.scheduledDateTime) {
-        console.log('Original scheduledDateTime:', bookingData.scheduledDateTime);
+        // console.log('Original scheduledDateTime:', bookingData.scheduledDateTime);
         const dateTimeParts = bookingData.scheduledDateTime.split('|');
         
         if (dateTimeParts.length >= 1) {
@@ -403,14 +399,14 @@ const [serviceType, setServiceType] = useState(() => {
           
           // Format dates to YYYY-MM-DD
           try {
-            console.log('Confirmation: Original date strings:', { startDate, endDate });
+            // console.log('Confirmation: Original date strings:', { startDate, endDate });
             const startDateObj = createConsistentDate(startDate);
             const endDateObj = createConsistentDate(endDate);
-            console.log('Confirmation: Parsed date objects:', { startDateObj, endDateObj });
+            // console.log('Confirmation: Parsed date objects:', { startDateObj, endDateObj });
             
             startDate = formatDateForAPI(startDateObj);
             endDate = formatDateForAPI(endDateObj);
-            console.log('Confirmation: Formatted dates for API:', { startDate, endDate });
+            // console.log('Confirmation: Formatted dates for API:', { startDate, endDate });
           } catch (e) {
             console.warn('Date parsing error, using current date:', e);
             const today = formatDateForAPI(new Date());
@@ -479,22 +475,20 @@ const [serviceType, setServiceType] = useState(() => {
           })()
         },
         
-       
-        
         // Include the full pet details object for reference
         petDetails: JSON.stringify(petDetailsArray),
       };
       
-      console.log('Confirmation: Submitting booking with payload:', bookingPayload);
+      // console.log('Confirmation: Submitting booking with payload:', bookingPayload);
       
       // Use the BookingContext to add the booking to the SQL database
       const result = await addBooking(bookingPayload);
       
-      console.log('Booking submission result:', result);
+      // console.log('Booking submission result:', result);
       
       // Handle the result regardless of its format
       if (result && !result.error) {
-        console.log('Confirmation: Booking successfully added');
+        // console.log('Confirmation: Booking successfully added');
         
         // Try to send email notification if we have an email
         if (bookingData.ownerDetails.email) {
@@ -503,10 +497,10 @@ const [serviceType, setServiceType] = useState(() => {
             let petNames = '';
             if (bookingData.pendingBookings && bookingData.pendingBookings.length > 0) {
               petNames = bookingData.pendingBookings.map(booking => booking.petName).join(', ');
-              console.log('Using pet names from pendingBookings:', petNames);
+              // console.log('Using pet names from pendingBookings:', petNames);
             } else {
               petNames = petDetailsArray.map(pet => pet.petName || pet.name).join(', ');
-              console.log('Using pet names from petDetailsArray:', petNames);
+              // console.log('Using pet names from petDetailsArray:', petNames);
             }
             
             // Get room type info - might be different for each pet in pendingBookings
@@ -538,7 +532,7 @@ const [serviceType, setServiceType] = useState(() => {
             });
             
             if (emailResponse.ok) {
-              console.log('Email notification sent successfully');
+              // console.log('Email notification sent successfully');
             }
           } catch (emailError) {
             console.warn('Email notification error:', emailError);
@@ -551,10 +545,10 @@ const [serviceType, setServiceType] = useState(() => {
           let petNames = '';
           if (bookingData.pendingBookings && bookingData.pendingBookings.length > 0) {
             petNames = bookingData.pendingBookings.map(booking => booking.petName).join(', ');
-            console.log('Admin notification using pet names from pendingBookings:', petNames);
+            // console.log('Admin notification using pet names from pendingBookings:', petNames);
           } else {
             petNames = petDetailsArray.map(pet => pet.petName || pet.name).join(', ');
-            console.log('Admin notification using pet names from petDetailsArray:', petNames);
+            // console.log('Admin notification using pet names from petDetailsArray:', petNames);
           }
           
           // Get room type info - might be different for each pet
@@ -590,7 +584,7 @@ const [serviceType, setServiceType] = useState(() => {
           });
           
           if (adminNotification.ok) {
-            console.log('Admin notification sent successfully');
+            // console.log('Admin notification sent successfully');
           }
         } catch (adminNotifyError) {
           console.warn('Admin notification error:', adminNotifyError);
@@ -665,33 +659,33 @@ const [serviceType, setServiceType] = useState(() => {
   let refFromRawResponses = '';
   if (bookingData && bookingData.rawBookingResponses && bookingData.rawBookingResponses.length > 0) {
     const raw = bookingData.rawBookingResponses[0];
-    console.log('REFERENCE EXTRACTION - Raw response:', JSON.stringify(raw, null, 2));
+    // console.log('REFERENCE EXTRACTION - Raw response:', JSON.stringify(raw, null, 2));
     
     // First priority: data.reference_number (new API response format)
     if (raw && raw.data && raw.data.reference_number) {
       refFromRawResponses = raw.data.reference_number;
-      console.log('SUCCESS: Found data.reference_number in API response:', refFromRawResponses);
+      // console.log('SUCCESS: Found data.reference_number in API response:', refFromRawResponses);
     }
     // Second priority: reference_number directly in response (snake_case as returned by API)
     else if (raw && raw.reference_number) {
       refFromRawResponses = raw.reference_number;
-      console.log('SUCCESS: Found reference_number in API response:', refFromRawResponses);
+      // console.log('SUCCESS: Found reference_number in API response:', refFromRawResponses);
     }
     // Third priority: referenceNumber (camelCase alternative)
     else if (raw && raw.referenceNumber) {
       refFromRawResponses = raw.referenceNumber;
-      console.log('SUCCESS: Using referenceNumber from API:', refFromRawResponses);
+      // console.log('SUCCESS: Using referenceNumber from API:', refFromRawResponses);
     }
     // Fourth priority: booking.reference_number (nested object)
     else if (raw && raw.booking && raw.booking.reference_number) {
       refFromRawResponses = raw.booking.reference_number;
-      console.log('SUCCESS: Using booking.reference_number from API:', refFromRawResponses);
+      // console.log('SUCCESS: Using booking.reference_number from API:', refFromRawResponses);
     }
     // Fifth priority: data.bookingId (use raw booking ID without prefix)
     else if (raw && raw.data && raw.data.bookingId) {
       console.warn('FALLBACK: No reference number found in API response, using bookingId');
       // Generate a deterministic reference number based on the booking ID
-      // This will be the same across all browsers and devices
+      // This ensures the same reference number is generated for the same booking ID
       const now = new Date();
       const dateStr = now.getFullYear().toString().slice(2) + 
                     (now.getMonth() + 1).toString().padStart(2, '0') + 
@@ -702,7 +696,7 @@ const [serviceType, setServiceType] = useState(() => {
       // This ensures the same reference number is generated for the same booking ID
       const fixedTimestamp = String(10000 + Number(bookingId)).slice(-5);
       refFromRawResponses = `BPB${dateStr}${fixedTimestamp}${String(bookingId).padStart(4, '0')}`;
-      console.log('Generated deterministic reference number from bookingId:', refFromRawResponses);
+      // console.log('Generated deterministic reference number from bookingId:', refFromRawResponses);
       
       // Also store this in the raw response for future reference
       raw.data.reference_number = refFromRawResponses;
@@ -719,7 +713,7 @@ const [serviceType, setServiceType] = useState(() => {
       const id = raw.id;
       const fixedTimestamp = String(10000 + Number(id)).slice(-5);
       refFromRawResponses = `BPB${dateStr}${fixedTimestamp}${String(id).padStart(4, '0')}`;
-      console.log('Generated deterministic reference number from id:', refFromRawResponses);
+      // console.log('Generated deterministic reference number from id:', refFromRawResponses);
       
       // Also store this in the raw response for future reference
       if (!raw.data) raw.data = {};
@@ -740,7 +734,7 @@ const [serviceType, setServiceType] = useState(() => {
         // Use a fixed timestamp based on altId to ensure consistency
         const fixedTimestamp = String(10000 + Number(altId)).slice(-5);
         refFromRawResponses = `BPB${dateStr}${fixedTimestamp}${String(altId).padStart(4, '0')}`;
-        console.log('Generated deterministic reference number from alternative field:', refFromRawResponses);
+        // console.log('Generated deterministic reference number from alternative field:', refFromRawResponses);
         
         // Also store this in the raw response for future reference
         if (!raw.data) raw.data = {};

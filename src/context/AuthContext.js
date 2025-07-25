@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (process.env.NODE_ENV !== 'production') {
         // Helpful console output so we can see exactly what the backend sent
-        console.log('Admin login response:', data);
+        // console.debug('Admin login response:', data);
       }
 
       if (!response.ok) {

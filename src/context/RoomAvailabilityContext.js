@@ -75,7 +75,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
       executive: { total: roomCapacity.executive, available: roomCapacity.executive }
     });
     
-    console.log('Room availability recalculated from capacity settings');
+    // console.log('Room availability recalculated from capacity settings');
   }, [MAX_SLOTS, setRoomAvailability]);
 
   // Fetch room availability from the API when component mounts or when selectedDate changes
@@ -102,7 +102,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
             };
           });
           
-          console.log('Room availability fetched from API:', response.data);
+          // console.log('Room availability fetched from API:', response.data);
         } catch (apiError) {
           console.warn('API fetch failed, using capacity calculation instead:', apiError);
           
@@ -122,7 +122,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
     
     // Listen for booking changes to update availability
     const handleBookingUpdate = () => {
-      console.log('RoomAvailabilityContext: Detected booking update');
+      // console.log('RoomAvailabilityContext: Detected booking update');
       fetchRoomAvailability();
     };
     
@@ -154,7 +154,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
     
     // Make sure roomType is lowercase for consistency
     roomType = roomType.toLowerCase();
-    console.log(`Updating room availability for ${roomType} by ${change} slots`);
+    // console.log(`Updating room availability for ${roomType} by ${change} slots`);
 
     // First update local state for immediate UI feedback
     setRoomAvailability(prev => {
@@ -176,7 +176,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
         return prev;
       }
       
-      console.log(`Room ${roomType} availability changing from ${currentAvailable} to ${newAvailable}`);
+      // console.log(`Room ${roomType} availability changing from ${currentAvailable} to ${newAvailable}`);
       
       return {
         ...prev,
@@ -208,7 +208,7 @@ export const RoomAvailabilityProvider = ({ children, selectedDate = null }) => {
           executive: response.data.overnight.executive
         }));
         
-        console.log('Room availability refreshed from API:', response.data);
+        // console.log('Room availability refreshed from API:', response.data);
         return true;
       } catch (apiError) {
         console.warn('API fetch failed during refresh, using capacity calculation instead:', apiError);

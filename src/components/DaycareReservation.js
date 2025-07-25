@@ -75,7 +75,7 @@ const DaycareReservation = () => {
   useEffect(() => {
     fetchUnavailableDates()
       .then(() => {
-        console.log('Successfully fetched unavailable dates from API');
+        // console.log('Successfully fetched unavailable dates from API');
       })
       .catch(error => {
         console.error('Error fetching unavailable dates:', error);
@@ -367,7 +367,7 @@ const DaycareReservation = () => {
   const createOrFetchPet = async (pet) => {
     try {
       // First try to find the pet
-      console.log('[DEBUG] Attempting to find/create pet', pet);
+      // // console.debug('[DEBUG] Attempting to find/create pet', pet);
     let petRes = await fetch(`${API_URL}/api/pets/find`, {
         method: 'POST',
         headers: {
@@ -485,14 +485,14 @@ const DaycareReservation = () => {
 
       // Create or fetch user first
       const userId = await createOrFetchUser(ownerName, ownerPhone, ownerEmail, ownerAddress);
-      console.log('Created/fetched user with ID:', userId);
+      // // console.debug('Created/fetched user with ID:', userId);
 
       // Create bookings for each pet
       const bookingResults = [];
       for (const pet of pets) {
         // Pass user_id when creating/fetching pet
         const createdPet = await createOrFetchPet({ ...pet, user_id: userId });
-        console.log('Created/fetched pet:', createdPet);
+        // // console.debug('Created/fetched pet:', createdPet);
 
         const bookingDetailsForContext = {
           serviceType: 'daycare',

@@ -48,7 +48,7 @@ const OvernightReservation = () => {
     // Fetch unavailable dates from the backend API using BookingContext
     fetchUnavailableDates()
       .then(() => {
-        console.log('Successfully fetched unavailable dates from API');
+        // // console.debug('Successfully fetched unavailable dates from API');
       })
       .catch(error => {
         console.error('Error fetching unavailable dates:', error);
@@ -114,11 +114,8 @@ const OvernightReservation = () => {
   // Log dates received from homepage for debugging
   useEffect(() => {
     if (location.state?.startDate || location.state?.endDate) {
-      console.log('Dates received from homepage:', { 
-        startDate: formatDateForDisplay(location.state.startDate), 
-        endDate: formatDateForDisplay(location.state.endDate),
-        selectedTime: location.state.selectedTime
-      });
+      // console.debug('Dates received from homepage'); 
+
     }
   }, [location.state]);
   
@@ -217,7 +214,7 @@ const getAvailableSlotsForRoom = (roomType, date) => {
           }
           return false; // Room not available
         } else {
-          console.log(`Available ${roomTypeToCheck} rooms (backend): ${backendSlots}`);
+          // // console.debug(`Available ${roomTypeToCheck} rooms (backend): ${backendSlots}`);
           return true; // Room available
         }
       } else {
@@ -244,7 +241,7 @@ const getAvailableSlotsForRoom = (roomType, date) => {
           }
           return false; // Room not available
         } else {
-          console.log(`Available ${roomTypeToCheck} rooms (local): ${getAvailableSlotsForRoom(roomTypeToCheck, startDate)}`);
+          // // console.debug(`Available ${roomTypeToCheck} rooms (local): ${getAvailableSlotsForRoom(roomTypeToCheck, startDate)}`);
           return true; // Room available
         }
       }
@@ -626,8 +623,8 @@ const handleCheckConfirmation = (e) => {
         totalAmount: totalAmount
   };
 
-  console.log('[CheckConfirmation] Booking Data:', JSON.parse(JSON.stringify(bookingDataForConfirmation)));
-  console.log('[CheckConfirmation] Created pending bookings for each pet:', pendingBookings.length);
+  // // console.debug('[CheckConfirmation] Booking Data:', JSON.parse(JSON.stringify(bookingDataForConfirmation)));
+  // // console.debug('[CheckConfirmation] Created pending bookings for each pet:', pendingBookings.length);
 
   // Navigate to confirmation page with complete booking data
   navigate('/confirmation', { 
