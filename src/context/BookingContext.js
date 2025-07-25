@@ -1148,7 +1148,7 @@ function toCamelCase(obj) {
     const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     
     // Debug log for room type checking
-    // console.log(`[DEBUG] Checking room availability for date ${formatDateForDisplay(normalizedDate)}, service: ${serviceType}, room: ${roomType || 'any'}`);
+    // Debug log removed
     
     // Filter bookings by service type, room type, and date
     const filteredBookings = bookings.filter(booking => {
@@ -1192,7 +1192,7 @@ function toCamelCase(obj) {
         
         // Extra logging for overnight rooms
         if (dateInRange && serviceMatches) {
-          // console.log(`[DEBUG] Overnight Room Check: Date: ${formatDateForDisplay(normalizedDate)}, Looking for ${roomType} (normalized: ${normalizedRoomTypeToCheck}), found ${bookingRoomTypeRaw} (normalized: ${normalizedBookingRoomType}), match: ${roomMatches}`);
+          // Debug log removed
         }
       } else if (roomType && serviceType === 'grooming') {
         // For grooming, check all possible field names for the grooming service type
@@ -1205,7 +1205,7 @@ function toCamelCase(obj) {
       
       // Debug logging for service-specific bookings (only for matching dates)
       if (dateInRange && serviceMatches) {
-        // console.log(`[DEBUG] ${serviceType} Booking Filter:`, {
+        // Debug log removed
           // bookingId: booking.id || 'New',
           // service: bookingServiceType,
           // room: booking.roomType || booking.room_type || booking.selectedRoom || 'none',
@@ -1219,7 +1219,7 @@ function toCamelCase(obj) {
       return result;
     });
     
-    // console.log(`[DEBUG] Total ${serviceType} bookings for ${formatDateForDisplay(normalizedDate)} ${roomType ? 'in ' + roomType : ''}: ${filteredBookings.length}`);
+    // Debug log removed
     return filteredBookings.length;
   };
   
@@ -1233,7 +1233,7 @@ function toCamelCase(obj) {
     if (roomType && roomType.includes(' ')) {
       // Extract just the first word (e.g., "Premium Room" -> "Premium")
       normalizedRoomType = roomType.split(' ')[0];
-      // console.log(`[DEBUG] Normalized room type from UI: ${roomType} -> ${normalizedRoomType}`);
+      // Debug log removed
     }
     
     const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -1248,7 +1248,7 @@ function toCamelCase(obj) {
       // Extract just the first word and convert to lowercase (e.g., "Deluxe Room" -> "deluxe", "Premium" -> "premium")
       const simpleRoomType = normalizedRoomType ? normalizedRoomType.split(' ')[0].toLowerCase() : 'deluxe';
       maxCapacity = MAX_SLOTS.overnight[simpleRoomType] || 0;
-      // console.log(`[DEBUG] Room capacity check: ${normalizedRoomType} (from ${roomType}) -> ${simpleRoomType}, capacity: ${maxCapacity}, current: ${currentCount}`);
+      // Debug log removed
     } else if (serviceType === 'grooming') {
       maxCapacity = MAX_SLOTS.grooming[roomType] || 0;
     } else {
@@ -1290,14 +1290,14 @@ function toCamelCase(obj) {
       // Extract the first word (e.g. "Premium Room" -> "premium") for MAX_SLOTS lookup
       const roomTypeDisplay = specificService; // Keep original for display
       const simplifiedRoomType = specificService.split(' ')[0].toLowerCase();
-      // console.log(`[DEBUG] Available slots for ${serviceType}: Normalizing room type from ${roomTypeDisplay} to ${simplifiedRoomType}`);
+      // Debug log removed
       
       maxSlots = MAX_SLOTS.overnight[simplifiedRoomType] || 0;
       // Using the normalized room type name to count bookings more accurately
       const normalizedRoomName = specificService.split(' ')[0];
       usedSlots = countBookingsByServiceAndRoom(normalizedDate, 'overnight', normalizedRoomName);
       
-      // console.log(`[DEBUG] Available slots for ${serviceType}, room type ${roomTypeDisplay}: max=${maxSlots}, used=${usedSlots}, remaining=${Math.max(0, maxSlots - usedSlots)}`);
+      // Debug log removed
       return Math.max(0, maxSlots - usedSlots);
     }
     
