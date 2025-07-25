@@ -35,9 +35,6 @@ const getEnvironment = () => {
 const currentEnv = getEnvironment();
 const config = environments[currentEnv];
 
-// Log the API URL being used for debugging
-console.log('Using API URL:', config.API_URL);
-
 // Export configuration values
 export const { API_URL, GOOGLE_CLIENT_ID, enableDebugMode, apiTimeout } = config;
 export default config;

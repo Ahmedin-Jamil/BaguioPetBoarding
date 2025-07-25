@@ -58,7 +58,6 @@ const validateDate = (dateStr, allowFuture = true) => {
     
     // Check if date is in the future (for birth dates, this should be false)
     if (!allowFuture && dateObj > todayObj) {
-      console.log('Future date detected:', dateStr);
       return { isValid: false, message: 'Date cannot be in the future' };
     }
     
@@ -118,7 +117,6 @@ function toCamelCase(obj) {
     try {
       setIsLoading(true);
       setError(null);
-      console.log('BookingContext: Fetching all bookings (admin view)');
       
       let bookingsData = [];
       const headers = {
@@ -128,34 +126,17 @@ function toCamelCase(obj) {
       const response = await fetch(`${API_URL}/api/bookings`, { headers });
 
       if (!response.ok) {
-        console.log(`error fetching from ${API_URL}`);
         throw new Error(`API request failed with status ${response.status}`);
       }
 
       bookingsData = await response.json();
-      console.log('BookingContext: Retrieved bookings from API:', bookingsData);
-
+      
       // Handle both array response and response with data property
       const bookingsArray = Array.isArray(bookingsData) ? bookingsData : 
                           (bookingsData.data && Array.isArray(bookingsData.data) ? bookingsData.data : []);
       
-      // Log the extracted bookings array
-      console.log('BookingContext: Extracted bookings array:', bookingsArray);
-      
-      // Debug log to check for breed and address fields in the raw data
-      if (bookingsArray.length > 0) {
-        console.log('BookingContext: Sample booking raw data:', {
-          'booking_id': bookingsArray[0].booking_id,
-          'breed': bookingsArray[0].breed,
-          'address': bookingsArray[0].address,
-          'customer_address': bookingsArray[0].customer_address
-        });
-      }
-      
-      const camelBookings = bookingsArray.map(toCamelCase);
-
       // Map bookings to our internal format - handling MySQL snake_case to camelCase conversion
-      const formattedBookings = camelBookings.map(booking => {
+      const formattedBookings = bookingsArray.map(booking => {
   // Get the raw date strings first
   const rawStartDate = booking.start_date || booking.startDate || booking.check_in_date || booking.checkInDate;
   const rawEndDate = booking.end_date || booking.endDate || booking.check_out_date || booking.checkOutDate;
@@ -169,8 +150,6 @@ function toCamelCase(obj) {
     // This is critical - using noon ensures it won't shift days due to timezone offsets
     const [year, month, day] = rawStartDate.split('-').map(Number);
     startDateObj = new Date(year, month - 1, day, 12, 0, 0);
-    console.log('BookingContext: Created date from YYYY-MM-DD without timezone shift:', 
-      rawStartDate, '->', startDateObj, '(Y/M/D):', year, month - 1, day);
   } else {
     // Use our utility for other formats
     startDateObj = createConsistentDate(rawStartDate);
@@ -180,8 +159,6 @@ function toCamelCase(obj) {
   if (typeof rawEndDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rawEndDate)) {
     const [year, month, day] = rawEndDate.split('-').map(Number);
     endDateObj = new Date(year, month - 1, day, 12, 0, 0);
-    console.log('BookingContext: Created date from YYYY-MM-DD without timezone shift:',
-      rawEndDate, '->', endDateObj);
   } else {
     endDateObj = createConsistentDate(rawEndDate);
   }
@@ -195,15 +172,15 @@ function toCamelCase(obj) {
   }
         
   // Debug the date values
-  console.log('BookingContext: Date values for booking', booking.id, ':', {
-    'Original start date': rawStartDate,
-    'Original end date': rawEndDate,
-    'Parsed start date': startDateObj,
-    'Parsed end date': endDateObj,
-    'Formatted for display': startDateObj ? startDateObj.toLocaleDateString('en-US', {
-      month: 'short', day: 'numeric', year: 'numeric'
-    }) : null
-  });
+  // console.log('BookingContext: Date values for booking', booking.id, ':', {
+    // 'Original start date': rawStartDate,
+    // 'Original end date': rawEndDate,
+    // 'Parsed start date': startDateObj,
+    // 'Parsed end date': endDateObj,
+    // 'Formatted for display': startDateObj ? startDateObj.toLocaleDateString('en-US', {
+      // month: 'short', day: 'numeric', year: 'numeric'
+    // }) : null
+  // });
   // ------------ SERVICE TYPE & DAYCARE DETECTION FIX ------------
   // We need to detect daycare even if the backend only returns service_id / is_daycare
   // Accept both snake_case and camelCase from backend
@@ -339,7 +316,7 @@ function toCamelCase(obj) {
           const roomStr = booking.room_type.toLowerCase();
           if (roomStr.includes('small')) return 'Small';
           if (roomStr.includes('medium')) return 'Medium';
-          if (roomStr.includes('x-large') || roomStr.includes('xl') || roomStr.includes('extra large')) return 'X-Large';
+          if (roomStr.includes('x-large') || roomStr.includes('x large') || roomStr.includes('xlarge') || roomStr.includes('xl') || roomStr.includes('extra large') || roomStr.includes('extra-large')) return 'X-Large';
           if (roomStr.includes('large')) return 'Large';
           if (roomStr.includes('cat')) return 'Cat';
         }
@@ -353,7 +330,7 @@ function toCamelCase(obj) {
           const roomStr = booking.room_type.toLowerCase();
           if (roomStr.includes('small')) return 'Small';
           if (roomStr.includes('medium')) return 'Medium';
-          if (roomStr.includes('x-large') || roomStr.includes('xl') || roomStr.includes('extra large')) return 'X-Large';
+          if (roomStr.includes('x-large') || roomStr.includes('x large') || roomStr.includes('xlarge') || roomStr.includes('xl') || roomStr.includes('extra large') || roomStr.includes('extra-large')) return 'X-Large';
           if (roomStr.includes('large')) return 'Large';
           if (roomStr.includes('cat')) return 'Cat';
         }
@@ -374,11 +351,8 @@ function toCamelCase(obj) {
     };
 });
 
-      console.log('BookingContext: Formatted bookings:', formattedBookings);
-      
       // Update bookings list
       setBookings(formattedBookings);
-      console.log(`BookingContext: Loaded ${formattedBookings.length} bookings`);
       return formattedBookings;
     } catch (error) {
       console.error('BookingContext: Error fetching bookings:', error);
@@ -571,12 +545,12 @@ function toCamelCase(obj) {
     };
     
     // Log final payload and return it
-    console.log('FINAL NORMALIZED PAYLOAD:', JSON.stringify(payload, null, 2));
+    // console.log('FINAL NORMALIZED PAYLOAD:', JSON.stringify(payload, null, 2));
     return payload;
   };
 
   const addBooking = async (bookingData) => {
-    console.log('BookingContext: addBooking received bookingData:', bookingData); // Debugging: Log incoming data
+    // console.log('BookingContext: addBooking received bookingData:', bookingData); // Debugging: Log incoming data
 
     // Derive owner fields once for this booking (flat or nested)
     const derivedOwnerName  = bookingData.ownerName  || bookingData.ownerDetails?.name  || '';
@@ -603,7 +577,7 @@ function toCamelCase(obj) {
         return { success: false, message: 'Missing required guest info' };
       }
       // Mark this as a guest-only booking
-      console.log('BookingContext: This is a guest booking');
+      // console.log('BookingContext: This is a guest booking');
     }
 
     setIsLoading(true);
@@ -614,19 +588,19 @@ function toCamelCase(obj) {
       const formatDate = (date) => {
         // Check if date is already a formatted string in YYYY-MM-DD format
         if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-          console.log('BookingContext: Date is already formatted correctly:', date);
+          // console.log('BookingContext: Date is already formatted correctly:', date);
           return date;
         }
 
         // If it's an ISO string with timezone (YYYY-MM-DDTHH:MM:SS.sssZ)
         if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}T.*Z$/.test(date)) {
           // Extract only the date part without timezone conversion
-          console.log('BookingContext: Extracting date part from ISO string:', date);
+          // console.log('BookingContext: Extracting date part from ISO string:', date);
           return date.slice(0, 10);
         }
 
         // Otherwise use the imported formatDateForMySQL utility to avoid timezone issues
-        console.log('BookingContext: Formatting date with formatDateForMySQL:', date);
+        // console.log('BookingContext: Formatting date with formatDateForMySQL:', date);
         // Access the imported function from the module scope
         return formatDateForMySQL(date) || formatDateForMySQL(new Date());
       };
@@ -640,10 +614,10 @@ function toCamelCase(obj) {
         // This handles both "premium" and "Premium Room" formats
         const roomTypeNormalized = roomTypeRaw.toLowerCase().split(' ')[0];
 
-        console.log('BookingContext: Determined roomType for service ID:', {
-          raw: roomTypeRaw,
-          normalized: roomTypeNormalized
-        });
+        // console.log('BookingContext: Determined roomType for service ID:', {
+          // raw: roomTypeRaw,
+          // normalized: roomTypeNormalized
+        // });
 
         // For overnight stays, map to the correct service ID based on normalized room type
         if (serviceType?.toLowerCase() === 'overnight') {
@@ -704,16 +678,16 @@ function toCamelCase(obj) {
       const hasAdjustedDates = bookingData.adjustedStartDate || bookingData.adjustedEndDate;
 
       // CRITICAL: Log the exact date values we're receiving
-      console.log('BOOKING DATE DEBUG - Detailed date analysis:', {
-        originalBookingDate: bookingData.bookingDate,
-        originalStartDate: bookingData.startDate,
-        originalEndDate: bookingData.endDate,
-        adjustedStartDate: bookingData.adjustedStartDate,
-        adjustedEndDate: bookingData.adjustedEndDate,
-        hasAdjustedDates: hasAdjustedDates,
-        willUseAdjustedDates: hasAdjustedDates,
-        serviceType: bookingData.serviceType
-      });
+      // console.log('BOOKING DATE DEBUG - Detailed date analysis:', {
+        // originalBookingDate: bookingData.bookingDate,
+        // originalStartDate: bookingData.startDate,
+        // originalEndDate: bookingData.endDate,
+        // adjustedStartDate: bookingData.adjustedStartDate,
+        // adjustedEndDate: bookingData.adjustedEndDate,
+        // hasAdjustedDates: hasAdjustedDates,
+        // willUseAdjustedDates: hasAdjustedDates,
+        // serviceType: bookingData.serviceType
+      // });
 
       
 
@@ -759,14 +733,14 @@ function toCamelCase(obj) {
       finalPayload.service_id = computedServiceId;
       finalPayload.serviceId  = computedServiceId;
 
-      console.log('BOOKING DATE DEBUG - Final payload dates:', {
-        booking_date: finalPayload.booking_date,
-        end_date: finalPayload.end_date,
-        start_time: finalPayload.start_time,
-        end_time: finalPayload.end_time,
-      });
+      // console.log('BOOKING DATE DEBUG - Final payload dates:', {
+        // booking_date: finalPayload.booking_date,
+        // end_date: finalPayload.end_date,
+        // start_time: finalPayload.start_time,
+        // end_time: finalPayload.end_time,
+      // });
 
-      console.log('BookingContext: Submitting final payload:', JSON.stringify(finalPayload, null, 2));
+      // console.log('BookingContext: Submitting final payload:', JSON.stringify(finalPayload, null, 2));
 
       const response = await fetch(`${API_URL}/api/bookings`, {
         method: 'POST',
@@ -800,7 +774,7 @@ function toCamelCase(obj) {
 
       // Parse the successful response
       const result = await response.json().catch(() => ({}));
-      console.log('BookingContext: API booking creation successful, response:', result);
+      // console.log('BookingContext: API booking creation successful, response:', result);
 
       // After a successful booking, refetch all bookings to ensure the UI is up-to-date.
       // This is crucial for updating availability slots correctly for all users.
@@ -821,7 +795,7 @@ function toCamelCase(obj) {
     // Check for admin authentication
     const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
 
-    console.log(`BookingContext: Updating booking ${bookingId} to ${newStatus}`);
+    // console.log(`BookingContext: Updating booking ${bookingId} to ${newStatus}`);
 
     try {
       setIsLoading(true);
@@ -841,7 +815,7 @@ function toCamelCase(obj) {
       } else if (currentStatus === 'confirmed' && (newStatus === 'completed' || newStatus === 'cancelled')) {
         isValidTransition = true;
       } else if (newStatus === currentStatus) {
-        console.log('BookingContext: No status change needed');
+        // console.log('BookingContext: No status change needed');
         return { success: true, message: 'No status change needed' };
       }
       
@@ -858,7 +832,7 @@ function toCamelCase(obj) {
         adminId: null  // Could be added from user context if needed
       };
       
-      console.log('BookingContext: Sending update request with payload:', requestBody);
+      // console.log('BookingContext: Sending update request with payload:', requestBody);
       
       // Use the exact endpoint structure from the backend routes
       const response = await fetch(`${API_URL}/api/bookings/${bookingId}/status`, {
@@ -875,14 +849,14 @@ function toCamelCase(obj) {
       
       try {
         const responseText = await response.text();
-        console.log(`BookingContext: API response status: ${response.status}`);
-        console.log('BookingContext: API response text:', responseText);
+        // console.log(`BookingContext: API response status: ${response.status}`);
+        // console.log('BookingContext: API response text:', responseText);
         
         // Try to parse as JSON if possible
         if (responseText) {
           try {
             responseData = JSON.parse(responseText);
-            console.log('BookingContext: API response parsed:', responseData);
+            // console.log('BookingContext: API response parsed:', responseData);
           } catch (e) {
             console.error('Error parsing response as JSON:', e);
           }
@@ -895,7 +869,7 @@ function toCamelCase(obj) {
         throw new Error(`API request failed with status ${response.status}`);
       }
 
-      console.log('BookingContext: API booking update successful');
+      // console.log('BookingContext: API booking update successful');
       
       // Update local state to match
       const updatedBookings = bookings.map(booking => 
@@ -924,10 +898,10 @@ function toCamelCase(obj) {
       }
       const dateString = formatDateForAPI(normalizedDate);
 
-      console.log('Adding unavailable date:', { originalDate: date, normalizedDate, dateString });
+      // console.log('Adding unavailable date:', { originalDate: date, normalizedDate, dateString });
 
       if (isDateUnavailable(normalizedDate)) {
-        console.warn('BookingContext: Date is already unavailable', normalizedDate);
+        // console.warn('BookingContext: Date is already unavailable', normalizedDate);
         return { success: true, message: 'Date already unavailable' };
       }
 
@@ -963,7 +937,7 @@ function toCamelCase(obj) {
       setUnavailableDates(updatedDates);
       const dateStrings = updatedDates.map(d => formatDateForAPI(d));
       localStorage.setItem('unavailableDates', JSON.stringify(dateStrings));
-      console.log('Successfully added unavailable date:', dateString);
+      // console.log('Successfully added unavailable date:', dateString);
       return { success: true };
     } catch (error) {
       console.error('BookingContext: Error adding unavailable date:', error);
@@ -989,7 +963,7 @@ function toCamelCase(obj) {
       }
       const dateString = formatDateForAPI(normalizedDate);
 
-      console.log('Removing unavailable date:', { originalDate: date, normalizedDate, dateString });
+      // console.log('Removing unavailable date:', { originalDate: date, normalizedDate, dateString });
 
       // Prepare headers (add auth if available)
       const headers = {
@@ -1026,7 +1000,7 @@ function toCamelCase(obj) {
       setUnavailableDates(updatedDates);
       const dateStrings = updatedDates.map(d => formatDateForAPI(d));
       localStorage.setItem('unavailableDates', JSON.stringify(dateStrings));
-      console.log('Successfully removed unavailable date:', dateString);
+      // console.log('Successfully removed unavailable date:', dateString);
       return { success: true };
     } catch (error) {
       console.error('BookingContext: Error removing unavailable date:', error);
@@ -1039,7 +1013,7 @@ function toCamelCase(obj) {
   // Fetch unavailable dates from the API
   const fetchUnavailableDates = async () => {
     try {
-      console.log('BookingContext: Fetching unavailable dates');
+      // console.log('BookingContext: Fetching unavailable dates');
       setIsLoading(true);
       setError(null);
       
@@ -1058,7 +1032,7 @@ function toCamelCase(obj) {
       }
       
       const data = await response.json();
-      console.log('BookingContext: Successfully fetched unavailable dates from API', data);
+      // console.log('BookingContext: Successfully fetched unavailable dates from API', data);
       
       // Handle different response formats
       let dateArray = [];
@@ -1075,7 +1049,7 @@ function toCamelCase(obj) {
         // Parse date and set to start of day in local timezone
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) {
-          console.warn('BookingContext: Invalid date found:', dateStr);
+          // console.warn('BookingContext: Invalid date found:', dateStr);
           return null;
         }
         date.setHours(0, 0, 0, 0);
@@ -1174,7 +1148,7 @@ function toCamelCase(obj) {
     const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     
     // Debug log for room type checking
-    console.log(`[DEBUG] Checking room availability for date ${formatDateForDisplay(normalizedDate)}, service: ${serviceType}, room: ${roomType || 'any'}`);
+    // console.log(`[DEBUG] Checking room availability for date ${formatDateForDisplay(normalizedDate)}, service: ${serviceType}, room: ${roomType || 'any'}`);
     
     // Filter bookings by service type, room type, and date
     const filteredBookings = bookings.filter(booking => {
@@ -1218,7 +1192,7 @@ function toCamelCase(obj) {
         
         // Extra logging for overnight rooms
         if (dateInRange && serviceMatches) {
-          console.log(`[DEBUG] Overnight Room Check: Date: ${formatDateForDisplay(normalizedDate)}, Looking for ${roomType} (normalized: ${normalizedRoomTypeToCheck}), found ${bookingRoomTypeRaw} (normalized: ${normalizedBookingRoomType}), match: ${roomMatches}`);
+          // console.log(`[DEBUG] Overnight Room Check: Date: ${formatDateForDisplay(normalizedDate)}, Looking for ${roomType} (normalized: ${normalizedRoomTypeToCheck}), found ${bookingRoomTypeRaw} (normalized: ${normalizedBookingRoomType}), match: ${roomMatches}`);
         }
       } else if (roomType && serviceType === 'grooming') {
         // For grooming, check all possible field names for the grooming service type
@@ -1231,21 +1205,21 @@ function toCamelCase(obj) {
       
       // Debug logging for service-specific bookings (only for matching dates)
       if (dateInRange && serviceMatches) {
-        console.log(`[DEBUG] ${serviceType} Booking Filter:`, {
-          bookingId: booking.id || 'New',
-          service: bookingServiceType,
-          room: booking.roomType || booking.room_type || booking.selectedRoom || 'none',
-          dates: `${formatDateForDisplay(bookingStart)} - ${formatDateForDisplay(bookingEnd)}`,
-          requestedDate: formatDateForDisplay(normalizedDate),
-          requestedRoom: roomType || 'any',
-          result: result ? 'MATCHED' : 'NOT MATCHED'
-        });
+        // console.log(`[DEBUG] ${serviceType} Booking Filter:`, {
+          // bookingId: booking.id || 'New',
+          // service: bookingServiceType,
+          // room: booking.roomType || booking.room_type || booking.selectedRoom || 'none',
+          // dates: `${formatDateForDisplay(bookingStart)} - ${formatDateForDisplay(bookingEnd)}`,
+          // requestedDate: formatDateForDisplay(normalizedDate),
+          // requestedRoom: roomType || 'any',
+          // result: result ? 'MATCHED' : 'NOT MATCHED'
+        // });
       }
 
       return result;
     });
     
-    console.log(`[DEBUG] Total ${serviceType} bookings for ${formatDateForDisplay(normalizedDate)} ${roomType ? 'in ' + roomType : ''}: ${filteredBookings.length}`);
+    // console.log(`[DEBUG] Total ${serviceType} bookings for ${formatDateForDisplay(normalizedDate)} ${roomType ? 'in ' + roomType : ''}: ${filteredBookings.length}`);
     return filteredBookings.length;
   };
   
@@ -1259,7 +1233,7 @@ function toCamelCase(obj) {
     if (roomType && roomType.includes(' ')) {
       // Extract just the first word (e.g., "Premium Room" -> "Premium")
       normalizedRoomType = roomType.split(' ')[0];
-      console.log(`[DEBUG] Normalized room type from UI: ${roomType} -> ${normalizedRoomType}`);
+      // console.log(`[DEBUG] Normalized room type from UI: ${roomType} -> ${normalizedRoomType}`);
     }
     
     const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -1274,7 +1248,7 @@ function toCamelCase(obj) {
       // Extract just the first word and convert to lowercase (e.g., "Deluxe Room" -> "deluxe", "Premium" -> "premium")
       const simpleRoomType = normalizedRoomType ? normalizedRoomType.split(' ')[0].toLowerCase() : 'deluxe';
       maxCapacity = MAX_SLOTS.overnight[simpleRoomType] || 0;
-      console.log(`[DEBUG] Room capacity check: ${normalizedRoomType} (from ${roomType}) -> ${simpleRoomType}, capacity: ${maxCapacity}, current: ${currentCount}`);
+      // console.log(`[DEBUG] Room capacity check: ${normalizedRoomType} (from ${roomType}) -> ${simpleRoomType}, capacity: ${maxCapacity}, current: ${currentCount}`);
     } else if (serviceType === 'grooming') {
       maxCapacity = MAX_SLOTS.grooming[roomType] || 0;
     } else {
@@ -1316,14 +1290,14 @@ function toCamelCase(obj) {
       // Extract the first word (e.g. "Premium Room" -> "premium") for MAX_SLOTS lookup
       const roomTypeDisplay = specificService; // Keep original for display
       const simplifiedRoomType = specificService.split(' ')[0].toLowerCase();
-      console.log(`[DEBUG] Available slots for ${serviceType}: Normalizing room type from ${roomTypeDisplay} to ${simplifiedRoomType}`);
+      // console.log(`[DEBUG] Available slots for ${serviceType}: Normalizing room type from ${roomTypeDisplay} to ${simplifiedRoomType}`);
       
       maxSlots = MAX_SLOTS.overnight[simplifiedRoomType] || 0;
       // Using the normalized room type name to count bookings more accurately
       const normalizedRoomName = specificService.split(' ')[0];
       usedSlots = countBookingsByServiceAndRoom(normalizedDate, 'overnight', normalizedRoomName);
       
-      console.log(`[DEBUG] Available slots for ${serviceType}, room type ${roomTypeDisplay}: max=${maxSlots}, used=${usedSlots}, remaining=${Math.max(0, maxSlots - usedSlots)}`);
+      // console.log(`[DEBUG] Available slots for ${serviceType}, room type ${roomTypeDisplay}: max=${maxSlots}, used=${usedSlots}, remaining=${Math.max(0, maxSlots - usedSlots)}`);
       return Math.max(0, maxSlots - usedSlots);
     }
     

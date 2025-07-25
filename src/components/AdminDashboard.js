@@ -355,7 +355,6 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
     const getServiceTypeDisplay = () => {
         // Check for daycare using multiple indicators (is_daycare flag, service_id=2, or serviceType=daycare)
         if (booking.is_daycare === 1 || booking.is_daycare === true || booking.service_id === 4 || booking.serviceId === 4 || booking.serviceType === 'daycare') {
-            console.log('Detected daycare booking:', booking.id, { is_daycare: booking.is_daycare, serviceId: booking.serviceId, service_id: booking.service_id });
             return 'Pet Day Care';
         } else if (booking.serviceType === 'grooming') {
             return 'Grooming';
@@ -449,10 +448,6 @@ const BookingItem = React.memo(({ booking, formatDateRange, onStatusChange, onVi
             if (booking.checkOut) booking.checkOut = exactDate;
             if (booking.endDate) booking.endDate = formattedDate;
             if (booking.end_date) booking.end_date = formattedDate;
-            
-            // Log the successful extension for debugging
-            console.log(`Booking extended to: ${formattedDate} (${exactDate.toDateString()})`);
-            console.log(`Original date selected: ${extensionDate.toDateString()}`);
             
             // Close modal and reset state
             setShowExtensionModal(false);
@@ -665,12 +660,11 @@ const AdminDashboard = () => {
     // Fetch bookings when component mounts
     useEffect(() => {
         if (isAuthenticated) {
-            console.log('AdminDashboard: Fetching bookings...');
             fetchBookings().catch(error => {
                 console.error('Error fetching bookings:', error);
             });
         } else {
-            console.log('AdminDashboard: Not authenticated, skipping booking fetch');
+            // intentionally left blank (no action needed when not authenticated)
         }
     }, [isAuthenticated, fetchBookings]);
 
@@ -771,17 +765,8 @@ const AdminDashboard = () => {
         }, {});
     }
     
-    // Add debugging for bookings
-    console.log('AdminDashboard: Current bookings:', bookings);
-    console.log('AdminDashboard: Selected date:', selectedDate);
-    console.log('AdminDashboard: Status filter:', statusFilter);
-    console.log('AdminDashboard: Service type filter:', serviceTypeFilter);
-    
     // Filter bookings based on selected date, status, service type, search query, and history filter
     const filteredBookings = bookings.filter(booking => {
-        // Add debug logging for each booking
-        console.log('Processing booking:', booking);
-        
         // Normalize dates by setting time to midnight
         const bookingStart = new Date(booking.checkIn || booking.startDate);
         const bookingEnd = new Date(booking.checkOut || booking.endDate || bookingStart);
@@ -791,44 +776,27 @@ const AdminDashboard = () => {
         const normalizedSelectedDate = new Date(selectedDate);
         normalizedSelectedDate.setHours(0, 0, 0, 0);
         
-        console.log('Dates:', {
-            bookingStart,
-            bookingEnd,
-            normalizedSelectedDate
-        });
-        
         // Date matching logic - if history filter is on, show all past bookings
         const isDateMatch = showHistoryFilter ? 
             (bookingEnd < new Date()) : // For history, show bookings that have ended
             (normalizedSelectedDate >= bookingStart && normalizedSelectedDate <= bookingEnd); // Normal date filtering
         
-        console.log('Date match:', isDateMatch);
-        
         // Status matching
         const isStatusMatch = statusFilter === 'all' || booking.status === statusFilter;
-        console.log('Status match:', isStatusMatch, { status: booking.status, filter: statusFilter });
         
         // Service type matching - normalize service type values
         const bookingServiceType = (booking.serviceType || booking.service_type || '').toLowerCase();
         const isServiceTypeMatch = serviceTypeFilter === 'all' || bookingServiceType === serviceTypeFilter.toLowerCase();
-        console.log('Service match:', isServiceTypeMatch, { 
-            bookingType: bookingServiceType, 
-            filter: serviceTypeFilter 
-        });
         
         // Search query matching - check if owner name contains the search query (case insensitive)
         const ownerName = booking.ownerName || booking.owner_name || booking.owner || '';
         const isSearchMatch = searchQuery === '' || 
             ownerName.toLowerCase().includes(searchQuery.toLowerCase());
-        console.log('Search match:', isSearchMatch, { ownerName, searchQuery });
         
         const matches = isDateMatch && isStatusMatch && isServiceTypeMatch && isSearchMatch;
-        console.log('Final match result:', matches);
         
         return matches;
     });
-    
-    console.log('AdminDashboard: Filtered bookings:', filteredBookings);
     
     // Function to handle month navigation
     const changeMonth = (amount) => {
@@ -994,16 +962,9 @@ const AdminDashboard = () => {
     
     // Handle toggling a date's availability
     const handleToggleUnavailableDate = (date) => {
-        console.log('AdminDashboard: handleToggleUnavailableDate called with:', {
-            originalDate: date,
-            dateType: typeof date,
-            dateString: date?.toString(),
-            dateISO: date?.toISOString(),
-            localDateString: date?.toLocaleDateString(),
-            year: date?.getFullYear(),
-            month: date?.getMonth(),
-            day: date?.getDate()
-        });
+            // month: date?.getMonth(),
+            // day: date?.getDate()
+        // });
         
         if (!isAdmin) {
             alert('Only administrators can manage unavailable dates. Please log in as an administrator.');
