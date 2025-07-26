@@ -657,15 +657,26 @@ const AdminDashboard = () => {
 
 
 
-    // Fetch bookings when component mounts
+    // Poll bookings with exponential back-off so we don't spam the API when it's down
     useEffect(() => {
-        if (isAuthenticated) {
-            fetchBookings().catch(error => {
-                console.error('Error fetching bookings:', error);
-            });
-        } else {
-            // intentionally left blank (no action needed when not authenticated)
-        }
+        if (!isAuthenticated) return;
+
+        let delay = 5000; // start with 5 s
+        let timeoutId;
+
+        const poll = async () => {
+            try {
+                await fetchBookings();
+                delay = 5000; // reset back-off on success
+            } catch (err) {
+                console.error('Error fetching bookings:', err.message);
+                delay = Math.min(delay * 2, 60000); // double up to 1 min
+            }
+            timeoutId = setTimeout(poll, delay);
+        };
+
+        poll();
+        return () => clearTimeout(timeoutId);
     }, [isAuthenticated, fetchBookings]);
 
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -687,10 +698,7 @@ const AdminDashboard = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    // Fetch bookings when component mounts
-    useEffect(() => {
-        fetchBookings();
-    }, [fetchBookings]);
+    
 
     async function fetchPricing() {
         setLoading(true);
