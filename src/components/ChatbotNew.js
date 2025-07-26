@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Info, ArrowDown, ArrowLeft, MessageSquare, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Bot, X, Info, ArrowDown, ArrowLeft, MessageSquare, ThumbsUp, ThumbsDown, Send } from 'lucide-react';
 import { API_URL } from '../config';
 import ChatbotFAQ from './ChatbotFAQ';
 import './ChatbotNew.css';
@@ -970,7 +970,36 @@ const ChatbotNew = ({ isOpen, onClose, onBack }) => {
             </div>
           )}
           
-          {/* No message input field - using click-based interface only */}
+          {/* Message input field */}
+          {viewState !== 'initial' && (
+            <div className="message-input-container">
+              <form
+                className="message-input-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendMessage(inputMessage);
+                  setInputMessage('');
+                }}
+              >
+                <input
+                  type="text"
+                  className="message-input"
+                  placeholder="Type your message..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  ref={inputRef}
+                />
+                <button
+                  type="submit"
+                  className="send-button"
+                  disabled={isLoading || !inputMessage.trim()}
+                  aria-label="Send message"
+                >
+                  <Send size={18} />
+                </button>
+              </form>
+            </div>
+          )}
 
         </div>
       </div>

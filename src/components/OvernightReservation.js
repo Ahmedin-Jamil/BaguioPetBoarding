@@ -429,7 +429,8 @@ const handleNumberOfPetsChange = (e) => {
       const newUser = await userRes.json();
       return newUser.id || newUser.user_id;
     } catch (error) {
-      // Error logging removed
+      // Log then rethrow so parent handlers retain context
+      console.error('createOrFetchUser error:', error);
       throw error;
     }
   };
@@ -483,7 +484,8 @@ const handleNumberOfPetsChange = (e) => {
       const newPet = await petRes.json();
       return newPet.id || newPet.pet_id;
     } catch (err) {
-      // Error logging removed
+      // Log details before propagating
+      console.error('createOrFetchPet error:', err);
       throw new Error(`Could not create or find pet: ${err.message}`);
     }
   };

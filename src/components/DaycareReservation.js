@@ -358,7 +358,8 @@ const DaycareReservation = () => {
       const newUser = await createResponse.json();
       return newUser.id || newUser.user_id;
     } catch (error) {
-      // Error logging removed
+      // Log the underlying error then re-throw so callers can handle it
+      console.error('createOrFetchUser error:', error);
       throw error;
     }
   };

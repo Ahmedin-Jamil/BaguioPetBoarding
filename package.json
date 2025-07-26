@@ -60,7 +60,9 @@
     ]
   },
   "devDependencies": {
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "cross-env": "^7.0.3",
+    "fs-extra": "^11.3.0",
     "gh-pages": "^6.3.0"
   }
 }
