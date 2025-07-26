@@ -1086,7 +1086,7 @@ return (
     </td>
   </tr>
 ) }
-                      {bookingData.additionalInfo && (
+                      {serviceType !== 'daycare' && serviceType !== 'grooming' && bookingData.additionalInfo && (
                         <tr>
                           <td colSpan="2" style={{ padding: '8px 0' }}>
                             <strong>Additional Information:</strong>
