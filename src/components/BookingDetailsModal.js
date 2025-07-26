@@ -193,29 +193,28 @@ function BookingDetailsModal({ booking, onClose, onHide }) {
                             <div className="detail-row">
                                 <span className="label">Name:</span>
                                 <span className="value">{(() => {
-                                        const ownerDetails = booking.ownerDetails || booking.customer || {};
-                                        // Direct full name fields if explicitly provided
-                                        if (booking.owner || booking.ownerName || booking.owner_name || ownerDetails.name) {
-                                            return booking.owner || booking.ownerName || booking.owner_name || ownerDetails.name;
+                                        // Direct full name fields from backend
+                                        if (booking.owner || booking.ownerName || booking.owner_name) {
+                                            return booking.owner || booking.ownerName || booking.owner_name;
                                         }
-                                        // Construct from first / last name variants (try nested first, then top-level fallbacks)
-                                        const first = ownerDetails.firstName || ownerDetails.first_name || booking.customer_first_name || booking.customerFirstName || booking.first_name || booking.firstName || booking.owner_first_name || '';
-                                        const last  = ownerDetails.lastName  || ownerDetails.last_name  || booking.customer_last_name  || booking.customerLastName  || booking.last_name  || booking.lastName  || booking.owner_last_name  || '';
+                                        // Construct from first / last name variants
+                                        const first = booking.customer_first_name || booking.customerFirstName || booking.first_name || booking.firstName || booking.owner_first_name || '';
+                                        const last  = booking.customer_last_name  || booking.customerLastName  || booking.last_name  || booking.lastName  || booking.owner_last_name  || '';
                                         const full = `${first} ${last}`.trim();
                                         return full || 'Not provided';
                                     })()}</span>
                             </div>
                             <div className="detail-row">
                                 <span className="label">Phone:</span>
-                                <span className="value">{booking.contactNumber || booking.ownerPhone || booking.owner_phone || booking.customerPhone || booking.customer_phone || booking.phone || booking.ownerDetails?.phone || booking.ownerDetails?.phoneNumber || 'Not provided'}</span>
+                                <span className="value">{booking.contactNumber || booking.ownerPhone || booking.owner_phone || booking.customerPhone || booking.customer_phone || booking.phone || 'Not provided'}</span>
                             </div>
                             <div className="detail-row">
                                 <span className="label">Email:</span>
-                                <span className="value">{booking.ownerEmail || booking.owner_email || booking.customerEmail || booking.customer_email || booking.email || booking.ownerDetails?.email || 'Not provided'}</span>
+                                <span className="value">{booking.ownerEmail || booking.owner_email || booking.customerEmail || booking.customer_email || booking.email || 'Not provided'}</span>
                             </div>
                             <div className="detail-row">
                                 <span className="label">Address:</span>
-                                <span className="value">{booking.ownerAddress || booking.owner_address || booking.customerAddress || booking.customer_address || booking.address || booking.ownerDetails?.address || 'Not provided'}</span>
+                                <span className="value">{booking.ownerAddress || booking.owner_address || booking.customerAddress || booking.customer_address || booking.address || 'Not provided'}</span>
                             </div>
                         </div>
 
