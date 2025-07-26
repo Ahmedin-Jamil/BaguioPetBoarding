@@ -295,11 +295,29 @@ function BookingDetailsModal({ booking, onClose, onHide }) {
                             )}
                         </div>
 
-                        {(booking.notes || booking.specialRequests || booking.special_requests || booking.adminNotes || booking.admin_notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info) && (
+                        {
+                                // Consolidate instruction fields to avoid duplicates
+                                (() => {
+                                    const instructions = booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info || '';
+                                    const requests = booking.specialRequests || booking.special_requests || '';
+                                    const adminNotes = booking.adminNotes || booking.admin_notes || '';
+                                    return Boolean(instructions || requests || adminNotes);
+                                })() && (
                             <div className="detail-group">
                                 <h3><FontAwesomeIcon icon={faInfoCircle} className="section-icon" /> Special Instructions</h3>
-                                {(booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info || booking.specialRequests || booking.special_requests) && 
-                                    <p className="notes">{booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info || booking.specialRequests || booking.special_requests}</p>}
+                                {(booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info) && (
+                                    <p className="notes">{booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info}</p>
+                                )}
+                                {(() => {
+                                    const instructions = booking.notes || booking.additionalInfo || booking.additionalInformation || booking.additional_info || '';
+                                    const requests = booking.specialRequests || booking.special_requests || '';
+                                    return requests && requests !== instructions;
+                                })() && (
+                                    <div>
+                                        <h5>Special Requests:</h5>
+                                        <p className="notes">{booking.specialRequests || booking.special_requests}</p>
+                                    </div>
+                                )}
                                 {(booking.specialRequests || booking.special_requests) && 
                                     <div>
                                         <h5>Special Requests:</h5>
